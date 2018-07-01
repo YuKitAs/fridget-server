@@ -1,6 +1,6 @@
-# Server
+# fridget-server
 
-The server-side of Fridget built with [Spring Boot](https://spring.io/projects/spring-boot).
+The server-side of [Fridget](https://github.com/YuKitAs/fridget-android) built with [Spring Boot](https://spring.io/projects/spring-boot).
 
 **Usage**
 
