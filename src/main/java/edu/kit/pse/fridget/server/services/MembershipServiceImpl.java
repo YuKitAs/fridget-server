@@ -32,13 +32,14 @@ public class MembershipServiceImpl implements MembershipService {
     public List<UserMembershipRepresentation> getAllMembers(String flatshareId) {
         return membershipRepository.findByFlatshareId(flatshareId)
                 .stream()
-                .map(membership -> new UserMembershipRepresentation(userRepository.getOne(membership.getUserId()), membership))
+                .map(membership -> UserMembershipRepresentation.buildFromUserAndMembership(userRepository.getOne(membership.getUserId()),
+                        membership))
                 .collect(Collectors.toList());
     }
 
     @Override
     public UserMembershipRepresentation getMember(String flatshareId, String userId) {
-        return new UserMembershipRepresentation(userRepository.getOne(userId),
+        return UserMembershipRepresentation.buildFromUserAndMembership(userRepository.getOne(userId),
                 membershipRepository.findByFlatshareIdAndUserId(flatshareId, userId));
     }
 

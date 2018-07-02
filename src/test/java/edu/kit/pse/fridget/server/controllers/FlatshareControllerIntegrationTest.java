@@ -14,11 +14,11 @@ public class FlatshareControllerIntegrationTest extends AbstractControllerIntegr
 
     @Test
     public void getFlatshare_ReturnsCorrectResponse() {
-        ResponseEntity<Flatshare> flatshareResponse = getTestRestTemplate().getForEntity(String.format("/flatshares/%s", FLATSHARE_ID),
+        ResponseEntity<Flatshare> response = getTestRestTemplate().getForEntity(String.format("/flatshares/%s", FLATSHARE_ID),
                 Flatshare.class);
 
-        assertThat(flatshareResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(flatshareResponse.getBody()).satisfies(body -> {
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).satisfies(body -> {
             assertThat(body.getId()).isEqualTo(FLATSHARE_ID);
             assertThat(body.getName()).isEqualTo("An Awesome Flatshare");
         });
@@ -27,11 +27,10 @@ public class FlatshareControllerIntegrationTest extends AbstractControllerIntegr
     @Test
     public void saveFlatshare_ReturnsCorrectResponse() throws Exception {
         SaveFlatshareCommand saveFlatshareCommand = getFixture("saveFlatshareCommand.json", SaveFlatshareCommand.class);
-        ResponseEntity<Flatshare> flatshareResponse = getTestRestTemplate().postForEntity("/flatshares", saveFlatshareCommand,
-                Flatshare.class);
+        ResponseEntity<Flatshare> response = getTestRestTemplate().postForEntity("/flatshares", saveFlatshareCommand, Flatshare.class);
 
-        assertThat(flatshareResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(flatshareResponse.getBody()).satisfies(body -> {
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(response.getBody()).satisfies(body -> {
             assertThat(body.getId()).matches(UUID_PATTERN);
             assertThat(body.getName()).isEqualTo("Another Awesome Flatshare");
         });
