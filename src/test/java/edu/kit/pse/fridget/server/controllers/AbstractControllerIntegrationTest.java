@@ -28,7 +28,7 @@ public abstract class AbstractControllerIntegrationTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    final String UUID_PATTERN = "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}";
+    final String UUID_PATTERN = "[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}";
 
     TestRestTemplate getTestRestTemplate() {
         return testRestTemplate;
