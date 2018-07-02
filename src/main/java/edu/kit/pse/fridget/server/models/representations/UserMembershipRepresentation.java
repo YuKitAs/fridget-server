@@ -1,26 +1,37 @@
 package edu.kit.pse.fridget.server.models.representations;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import edu.kit.pse.fridget.server.models.Membership;
 import edu.kit.pse.fridget.server.models.User;
 
 public class UserMembershipRepresentation {
-    private final User user;
-    private final Membership membership;
+    private final String membershipId;
+    private final String magnetColor;
+    private final String googleName;
 
-    public UserMembershipRepresentation(User user, Membership membership) {
-        this.user = user;
-        this.membership = membership;
+    @JsonCreator
+    private UserMembershipRepresentation(@JsonProperty("membershipId") String membershipId, @JsonProperty("magnetColor") String magnetColor,
+            @JsonProperty("googleName") String googleName) {
+        this.membershipId = membershipId;
+        this.magnetColor = magnetColor;
+        this.googleName = googleName;
     }
 
-    public String getUserId() {
-        return user.getId();
-    }
-
-    public String getGoogleName() {
-        return user.getGoogleName();
+    public String getMembershipId() {
+        return membershipId;
     }
 
     public String getMagnetColor() {
-        return membership.getMagnetColor();
+        return magnetColor;
+    }
+
+    public String getGoogleName() {
+        return googleName;
+    }
+
+    public static UserMembershipRepresentation buildFromUserAndMembership(User user, Membership membership) {
+        return new UserMembershipRepresentation(membership.getId(), membership.getMagnetColor(), user.getGoogleName());
     }
 }
