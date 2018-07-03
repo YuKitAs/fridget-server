@@ -23,10 +23,10 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         UserMembershipRepresentation[] userMembershipRepresentations = response.getBody();
-        assertThat(userMembershipRepresentations.length).isEqualTo(1);
+        assertThat(userMembershipRepresentations.length).isEqualTo(2);
         assertThat(userMembershipRepresentations[0]).satisfies(representation -> {
             assertThat(representation.getMembershipId()).matches(UUID_PATTERN);
-            assertThat(representation.getMagnetColor()).matches("000000");
+            assertThat(representation.getMagnetColor()).matches("0099cc");
             assertThat(representation.getGoogleName()).isEqualTo("John Doe");
         });
     }
@@ -39,7 +39,7 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).satisfies(representation -> {
             assertThat(representation.getMembershipId()).matches(UUID_PATTERN);
-            assertThat(representation.getMagnetColor()).matches("000000");
+            assertThat(representation.getMagnetColor()).matches("0099cc");
             assertThat(representation.getGoogleName()).isEqualTo("John Doe");
         });
     }
@@ -53,7 +53,7 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
         assertThat(response.getBody()).satisfies(body -> {
             assertThat(body.getId()).matches(UUID_PATTERN);
             assertThat(body.getFlatshareId()).isEqualTo("00000000-0000-0000-0000-000000000000");
-            assertThat(body.getUserId()).isEqualTo("00000000-0000-0000-0000-000000000001");
+            assertThat(body.getUserId()).isEqualTo("00000000-0000-0000-0000-000000000002");
             assertThat(body.getMagnetColor()).matches("[0-9a-f]{6}");
         });
     }
