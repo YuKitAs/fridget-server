@@ -2,6 +2,7 @@ package edu.kit.pse.fridget.server.controllers;
 
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import edu.kit.pse.fridget.server.models.Flatshare;
@@ -18,6 +19,7 @@ public class FlatshareControllerIntegrationTest extends AbstractControllerIntegr
                 Flatshare.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getHeaders().getContentType().includes(MediaType.APPLICATION_JSON_UTF8)).isTrue();
         assertThat(response.getBody()).satisfies(body -> {
             assertThat(body.getId()).isEqualTo(FLATSHARE_ID);
             assertThat(body.getName()).isEqualTo("An Awesome Flatshare");
@@ -30,6 +32,7 @@ public class FlatshareControllerIntegrationTest extends AbstractControllerIntegr
         ResponseEntity<Flatshare> response = getTestRestTemplate().postForEntity("/flatshares", saveFlatshareCommand, Flatshare.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(response.getHeaders().getContentType().includes(MediaType.APPLICATION_JSON_UTF8)).isTrue();
         assertThat(response.getBody()).satisfies(body -> {
             assertThat(body.getId()).matches(UUID_PATTERN);
             assertThat(body.getName()).isEqualTo("Another Awesome Flatshare");

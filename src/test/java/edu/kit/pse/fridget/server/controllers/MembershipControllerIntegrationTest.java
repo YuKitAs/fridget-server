@@ -3,6 +3,7 @@ package edu.kit.pse.fridget.server.controllers;
 import org.junit.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import edu.kit.pse.fridget.server.models.Membership;
@@ -21,6 +22,7 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
                 String.format("/memberships/users?flatshare=%s", FLATSHARE_ID), UserMembershipRepresentation[].class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getHeaders().getContentType().includes(MediaType.APPLICATION_JSON_UTF8)).isTrue();
 
         UserMembershipRepresentation[] userMembershipRepresentations = response.getBody();
         assertThat(userMembershipRepresentations.length).isEqualTo(2);
@@ -37,6 +39,7 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
                 String.format("/memberships?flatshare=%s&user=%s", FLATSHARE_ID, USER_ID), UserMembershipRepresentation.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getHeaders().getContentType().includes(MediaType.APPLICATION_JSON_UTF8)).isTrue();
         assertThat(response.getBody()).satisfies(representation -> {
             assertThat(representation.getMembershipId()).matches(UUID_PATTERN);
             assertThat(representation.getMagnetColor()).matches("0099cc");
@@ -50,6 +53,7 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
         ResponseEntity<Membership> response = getTestRestTemplate().postForEntity("/memberships", saveMembershipCommand, Membership.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(response.getHeaders().getContentType().includes(MediaType.APPLICATION_JSON_UTF8)).isTrue();
         assertThat(response.getBody()).satisfies(body -> {
             assertThat(body.getId()).matches(UUID_PATTERN);
             assertThat(body.getFlatshareId()).isEqualTo("00000000-0000-0000-0000-000000000000");

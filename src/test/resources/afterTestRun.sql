@@ -4,5 +4,9 @@ TRUNCATE TABLE users;
 TRUNCATE TABLE flatshares;
 TRUNCATE TABLE access_codes;
 TRUNCATE TABLE memberships;
+TRUNCATE TABLE cool_notes;
+TRUNCATE TABLE frozen_notes;
+TRUNCATE TABLE tagged_members;
+TRUNCATE TABLE read_confirmations;
 
 SET FOREIGN_KEY_CHECKS = 1;

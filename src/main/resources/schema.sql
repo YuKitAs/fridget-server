@@ -1,20 +1,20 @@
 CREATE TABLE IF NOT EXISTS flatshares (
     id CHAR(36) UNIQUE,
-    name VARCHAR(255),
+    name VARCHAR(255) NOT NULL,
     PRIMARY KEY(id)
 );
 
 CREATE TABLE IF NOT EXISTS users (
     id CHAR(36) UNIQUE,
-    google_user_id VARCHAR(255),
-    google_name VARCHAR(255),
+    google_user_id VARCHAR(255) NOT NULL,
+    google_name VARCHAR(255) NOT NULL,
     PRIMARY KEY(id)
 );
 
 CREATE TABLE IF NOT EXISTS access_codes (
     id CHAR(36) UNIQUE,
-    flatshare_id CHAR(36),
-    content CHAR(5),
+    flatshare_id CHAR(36) NOT NULL,
+    content CHAR(5) NOT NULL,
     PRIMARY KEY(id),
     FOREIGN KEY(flatshare_id)
         REFERENCES flatshares(id)
@@ -23,9 +23,9 @@ CREATE TABLE IF NOT EXISTS access_codes (
 
 CREATE TABLE IF NOT EXISTS memberships (
     id CHAR(36) UNIQUE,
-    flatshare_id CHAR(36),
-    user_id CHAR(36),
-    magnet_color CHAR(6),
+    flatshare_id CHAR(36) NOT NULL,
+    user_id CHAR(36) NOT NULL,
+    magnet_color CHAR(6) NOT NULL,
     PRIMARY KEY(id),
     FOREIGN KEY(flatshare_id)
         REFERENCES flatshares(id)
@@ -37,11 +37,11 @@ CREATE TABLE IF NOT EXISTS memberships (
 
 CREATE TABLE IF NOT EXISTS cool_notes (
     id CHAR(36) UNIQUE,
-    title TEXT,
+    title TEXT NOT NULL,
     content TEXT,
-    creator_membership_id CHAR(36),
+    creator_membership_id CHAR(36) NOT NULL,
     importance INT,
-    position INT,
+    position INT NOT NULL,
     created_at DATETIME,
     PRIMARY KEY(id),
     FOREIGN KEY(creator_membership_id)
@@ -51,10 +51,10 @@ CREATE TABLE IF NOT EXISTS cool_notes (
 
 CREATE TABLE IF NOT EXISTS frozen_notes (
     id CHAR(36) UNIQUE,
-    flatshare_id CHAR(36),
+    flatshare_id CHAR(36) NOT NULL,
     title TEXT,
     content TEXT,
-    position INT,
+    position INT NOT NULL,
     PRIMARY KEY(id),
     FOREIGN KEY(flatshare_id)
         REFERENCES flatshares(id)
@@ -63,8 +63,8 @@ CREATE TABLE IF NOT EXISTS frozen_notes (
 
 CREATE TABLE IF NOT EXISTS read_confirmations (
     id CHAR(36) UNIQUE,
-    cool_note_id CHAR(36),
-    membership_id CHAR(36),
+    cool_note_id CHAR(36) NOT NULL,
+    membership_id CHAR(36) NOT NULL,
     PRIMARY KEY(id),
     FOREIGN KEY(cool_note_id)
         REFERENCES cool_notes(id)
@@ -76,8 +76,8 @@ CREATE TABLE IF NOT EXISTS read_confirmations (
 
 CREATE TABLE IF NOT EXISTS tagged_members (
     id CHAR(36) UNIQUE,
-    cool_note_id CHAR(36),
-    membership_id CHAR(36),
+    cool_note_id CHAR(36) NOT NULL,
+    membership_id CHAR(36) NOT NULL,
     PRIMARY KEY(id),
     FOREIGN KEY(cool_note_id)
         REFERENCES cool_notes(id)
