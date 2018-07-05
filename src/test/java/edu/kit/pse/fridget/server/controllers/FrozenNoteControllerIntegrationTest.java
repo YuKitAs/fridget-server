@@ -17,6 +17,7 @@ public class FrozenNoteControllerIntegrationTest extends AbstractControllerInteg
     private static final String FROZEN_NOTE_ID_0 = "00000000-0000-0000-0000-000000000000";
     private static final String FROZEN_NOTE_ID_1 = "00000000-0000-0000-0000-000000000001";
     private static final String FROZEN_NOTE_ID_2 = "00000000-0000-0000-0000-000000000002";
+    private static final int FROZEN_NOTE_POSITION = 0;
 
     @Test
     public void getAllFrozenNotes() {
@@ -39,24 +40,27 @@ public class FrozenNoteControllerIntegrationTest extends AbstractControllerInteg
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getHeaders().getContentType().includes(MediaType.APPLICATION_JSON_UTF8)).isTrue();
-        assertThat(response.getBody().getId()).isEqualTo(FROZEN_NOTE_ID_0);
-        assertThat(response.getBody().getFlatshareId()).isEqualTo(FLATSHARE_ID);
-        assertThat(response.getBody().getTitle()).isEmpty();
-        assertThat(response.getBody().getContent()).isEmpty();
-        assertThat(response.getBody().getPosition()).isEqualTo(0);
+        assertThat(response.getBody()).satisfies(frozenNote -> {
+            assertThat(frozenNote.getId()).isEqualTo(FROZEN_NOTE_ID_0);
+            assertThat(frozenNote.getFlatshareId()).isEqualTo(FLATSHARE_ID);
+            assertThat(frozenNote.getTitle()).isEmpty();
+            assertThat(frozenNote.getContent()).isEmpty();
+            assertThat(frozenNote.getPosition()).isEqualTo(FROZEN_NOTE_POSITION);
+        });
     }
 
     @Test
     public void updateFrozenNote() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        HttpEntity<FrozenNote> frozenNote = new HttpEntity<>(getFixture("frozenNote.json", FrozenNote.class), headers);
         ResponseEntity<FrozenNote> response = getTestRestTemplate().exchange(String.format("/frozen-notes/%s", FROZEN_NOTE_ID_0),
-                HttpMethod.PUT, frozenNote, FrozenNote.class);
+                HttpMethod.PUT, new HttpEntity<>(getFixture("frozenNote.json", FrozenNote.class), headers), FrozenNote.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getHeaders().getContentType().includes(MediaType.APPLICATION_JSON_UTF8)).isTrue();
-        assertThat(response.getBody().getTitle()).isEqualTo("Notfallkontakt");
-        assertThat(response.getBody().getContent()).isEqualTo("Bonbon");
+        assertThat(response.getBody()).satisfies(frozenNote -> {
+            assertThat(frozenNote.getTitle()).isEqualTo("Notfallkontakt");
+            assertThat(frozenNote.getContent()).isEqualTo("Bonbon");
+        });
     }
 }

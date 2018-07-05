@@ -12,6 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class FlatshareControllerIntegrationTest extends AbstractControllerIntegrationTest {
     private static final String FLATSHARE_ID = "00000000-0000-0000-0000-000000000000";
+    private static final String FLATSHARE_NAME = "An Awesome Flatshare";
 
     @Test
     public void getFlatshare_ReturnsCorrectResponse() {
@@ -20,22 +21,22 @@ public class FlatshareControllerIntegrationTest extends AbstractControllerIntegr
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getHeaders().getContentType().includes(MediaType.APPLICATION_JSON_UTF8)).isTrue();
-        assertThat(response.getBody()).satisfies(body -> {
-            assertThat(body.getId()).isEqualTo(FLATSHARE_ID);
-            assertThat(body.getName()).isEqualTo("An Awesome Flatshare");
+        assertThat(response.getBody()).satisfies(flatshare -> {
+            assertThat(flatshare.getId()).isEqualTo(FLATSHARE_ID);
+            assertThat(flatshare.getName()).isEqualTo(FLATSHARE_NAME);
         });
     }
 
     @Test
     public void saveFlatshare_ReturnsCorrectResponse() throws Exception {
-        SaveFlatshareCommand saveFlatshareCommand = getFixture("saveFlatshareCommand.json", SaveFlatshareCommand.class);
-        ResponseEntity<Flatshare> response = getTestRestTemplate().postForEntity("/flatshares", saveFlatshareCommand, Flatshare.class);
+        ResponseEntity<Flatshare> response = getTestRestTemplate().postForEntity("/flatshares",
+                getFixture("saveFlatshareCommand.json", SaveFlatshareCommand.class), Flatshare.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getHeaders().getContentType().includes(MediaType.APPLICATION_JSON_UTF8)).isTrue();
-        assertThat(response.getBody()).satisfies(body -> {
-            assertThat(body.getId()).matches(UUID_PATTERN);
-            assertThat(body.getName()).isEqualTo("Another Awesome Flatshare");
+        assertThat(response.getBody()).satisfies(flatshare -> {
+            assertThat(flatshare.getId()).matches(UUID_PATTERN);
+            assertThat(flatshare.getName()).isEqualTo("Another Awesome Flatshare");
         });
     }
 }

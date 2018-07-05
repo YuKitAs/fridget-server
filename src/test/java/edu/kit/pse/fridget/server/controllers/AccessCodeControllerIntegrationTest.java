@@ -10,18 +10,19 @@ import edu.kit.pse.fridget.server.models.AccessCode;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AccessCodeControllerIntegrationTest extends AbstractControllerIntegrationTest {
+    private static final String FLATSHARE_ID = "00000000-0000-0000-0000-000000000000";
 
     @Test
     public void generateAccessCode() throws Exception {
-        AccessCode accessCode = getFixture("accessCode.json", AccessCode.class);
-        ResponseEntity<AccessCode> response = getTestRestTemplate().postForEntity("/access-codes", accessCode, AccessCode.class);
+        ResponseEntity<AccessCode> response = getTestRestTemplate().postForEntity("/access-codes",
+                getFixture("accessCode.json", AccessCode.class), AccessCode.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getHeaders().getContentType().includes(MediaType.APPLICATION_JSON_UTF8)).isTrue();
-        assertThat(response.getBody()).satisfies(body -> {
-            assertThat(body.getId()).matches(UUID_PATTERN);
-            assertThat(body.getFlatshareId()).isEqualTo("00000000-0000-0000-0000-000000000000");
-            assertThat(body.getContent()).matches("[0-9a-zA-Z]{5}");
+        assertThat(response.getBody()).satisfies(accessCode -> {
+            assertThat(accessCode.getId()).matches(UUID_PATTERN);
+            assertThat(accessCode.getFlatshareId()).isEqualTo(FLATSHARE_ID);
+            assertThat(accessCode.getContent()).matches("[0-9a-zA-Z]{5}");
         });
     }
 }

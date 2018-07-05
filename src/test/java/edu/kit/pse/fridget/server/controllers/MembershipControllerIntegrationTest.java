@@ -15,21 +15,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MembershipControllerIntegrationTest extends AbstractControllerIntegrationTest {
     private static final String FLATSHARE_ID = "00000000-0000-0000-0000-000000000000";
     private static final String USER_ID = "00000000-0000-0000-0000-000000000000";
+    private static final String MAGNET_COLOR = "0099cc";
+    private static final String GOOGLE_NAME = "John Doe";
 
     @Test
     public void getAllMembers() {
         ResponseEntity<UserMembershipRepresentation[]> response = getTestRestTemplate().getForEntity(
                 String.format("/memberships/users?flatshare=%s", FLATSHARE_ID), UserMembershipRepresentation[].class);
+        UserMembershipRepresentation[] userMembershipRepresentations = response.getBody();
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getHeaders().getContentType().includes(MediaType.APPLICATION_JSON_UTF8)).isTrue();
-
-        UserMembershipRepresentation[] userMembershipRepresentations = response.getBody();
         assertThat(userMembershipRepresentations.length).isEqualTo(2);
         assertThat(userMembershipRepresentations[0]).satisfies(representation -> {
             assertThat(representation.getMembershipId()).matches(UUID_PATTERN);
-            assertThat(representation.getMagnetColor()).matches("0099cc");
-            assertThat(representation.getGoogleName()).isEqualTo("John Doe");
+            assertThat(representation.getMagnetColor()).matches(MAGNET_COLOR);
+            assertThat(representation.getGoogleName()).isEqualTo(GOOGLE_NAME);
         });
     }
 
@@ -42,23 +43,23 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
         assertThat(response.getHeaders().getContentType().includes(MediaType.APPLICATION_JSON_UTF8)).isTrue();
         assertThat(response.getBody()).satisfies(representation -> {
             assertThat(representation.getMembershipId()).matches(UUID_PATTERN);
-            assertThat(representation.getMagnetColor()).matches("0099cc");
-            assertThat(representation.getGoogleName()).isEqualTo("John Doe");
+            assertThat(representation.getMagnetColor()).matches(MAGNET_COLOR);
+            assertThat(representation.getGoogleName()).isEqualTo(GOOGLE_NAME);
         });
     }
 
     @Test
     public void saveMembership() throws Exception {
-        SaveMembershipCommand saveMembershipCommand = getFixture("saveMembershipCommand.json", SaveMembershipCommand.class);
-        ResponseEntity<Membership> response = getTestRestTemplate().postForEntity("/memberships", saveMembershipCommand, Membership.class);
+        ResponseEntity<Membership> response = getTestRestTemplate().postForEntity("/memberships",
+                getFixture("saveMembershipCommand.json", SaveMembershipCommand.class), Membership.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getHeaders().getContentType().includes(MediaType.APPLICATION_JSON_UTF8)).isTrue();
-        assertThat(response.getBody()).satisfies(body -> {
-            assertThat(body.getId()).matches(UUID_PATTERN);
-            assertThat(body.getFlatshareId()).isEqualTo("00000000-0000-0000-0000-000000000000");
-            assertThat(body.getUserId()).isEqualTo("00000000-0000-0000-0000-000000000002");
-            assertThat(body.getMagnetColor()).matches("[0-9a-f]{6}");
+        assertThat(response.getBody()).satisfies(representation -> {
+            assertThat(representation.getId()).matches(UUID_PATTERN);
+            assertThat(representation.getFlatshareId()).isEqualTo("00000000-0000-0000-0000-000000000000");
+            assertThat(representation.getUserId()).isEqualTo("00000000-0000-0000-0000-000000000002");
+            assertThat(representation.getMagnetColor()).matches("[0-9a-f]{6}");
         });
     }
 
