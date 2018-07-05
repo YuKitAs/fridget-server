@@ -26,7 +26,7 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getHeaders().getContentType().includes(MediaType.APPLICATION_JSON_UTF8)).isTrue();
-        assertThat(userMembershipRepresentations.length).isEqualTo(2);
+        assertThat(userMembershipRepresentations.length).isEqualTo(3);
         assertThat(userMembershipRepresentations[0]).satisfies(representation -> {
             assertThat(representation.getMembershipId()).matches(UUID_PATTERN);
             assertThat(representation.getMagnetColor()).matches(MAGNET_COLOR);

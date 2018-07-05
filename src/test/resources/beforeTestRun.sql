@@ -1,19 +1,25 @@
 REPLACE INTO users VALUES (
     "00000000-0000-0000-0000-000000000000",
-    "a-valid-google-id",
+    "valid-google-id-0",
     "John Doe"
 );
 
 REPLACE INTO users VALUES (
     "00000000-0000-0000-0000-000000000001",
-    "another-valid-google-id",
+    "valid-google-id-1",
     "Jane Doe"
 );
 
 REPLACE INTO users VALUES (
     "00000000-0000-0000-0000-000000000002",
-    "another-unique-valid-google-id",
+    "valid-google-id-2",
     "Richard Roe"
+);
+
+REPLACE INTO users VALUES (
+    "00000000-0000-0000-0000-000000000003",
+    "valid-google-id-3",
+    "Jane Roe"
 );
 
 REPLACE INTO flatshares VALUES (
@@ -39,6 +45,13 @@ REPLACE INTO memberships VALUES (
     "00000000-0000-0000-0000-000000000000",
     "00000000-0000-0000-0000-000000000001",
     "ffffff"
+);
+
+REPLACE INTO memberships VALUES (
+    "00000000-0000-0000-0000-000000000002",
+    "00000000-0000-0000-0000-000000000000",
+    "00000000-0000-0000-0000-000000000003",
+    "0000ff"
 );
 
 REPLACE INTO frozen_notes VALUES (
@@ -75,13 +88,13 @@ REPLACE INTO cool_notes VALUES (
     "2018-07-01 00:00:00"
 );
 
-REPLACE INTO tagged_members VALUES (
+REPLACE INTO read_confirmations VALUES (
     "00000000-0000-0000-0000-000000000000",
     "00000000-0000-0000-0000-000000000000",
     "00000000-0000-0000-0000-000000000001"
 );
 
-REPLACE INTO read_confirmations VALUES (
+REPLACE INTO tagged_members VALUES (
     "00000000-0000-0000-0000-000000000000",
     "00000000-0000-0000-0000-000000000000",
     "00000000-0000-0000-0000-000000000001"
