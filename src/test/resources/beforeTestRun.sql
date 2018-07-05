@@ -72,7 +72,7 @@ REPLACE INTO cool_notes VALUES (
     "00000000-0000-0000-0000-000000000000",
     0,
     0,
-    "2018-07-01"
+    "2018-07-01 00:00:00"
 );
 
 REPLACE INTO tagged_members VALUES (

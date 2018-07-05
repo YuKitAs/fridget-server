@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS cool_notes (
     creator_membership_id CHAR(36) NOT NULL,
     importance INT,
     position INT NOT NULL,
-    created_at DATETIME,
+    created_at TIMESTAMP,
     PRIMARY KEY(id),
     FOREIGN KEY(creator_membership_id)
         REFERENCES memberships(id)
