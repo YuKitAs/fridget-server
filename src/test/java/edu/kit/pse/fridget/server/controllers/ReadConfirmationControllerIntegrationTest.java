@@ -15,7 +15,6 @@ public class ReadConfirmationControllerIntegrationTest extends AbstractControlle
     private static final String COOL_NOTE_ID = "00000000-0000-0000-0000-000000000000";
     private static final String MEMBERSHIP_ID = "00000000-0000-0000-0000-000000000001";
     private static final String MAGNET_COLOR = "ffffff";
-    private static final String READ_CONFIRMATION_ID = "00000000-0000-0000-0000-000000000000";
 
     @Test
     public void getAllMemberships() {

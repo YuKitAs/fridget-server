@@ -1,7 +1,5 @@
 package edu.kit.pse.fridget.server.services;
 
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,20 +10,20 @@ import edu.kit.pse.fridget.server.repositories.UserRepository;
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository repository;
+    private final AuthenticationService authenticationService;
 
     @Autowired
-    public UserServiceImpl(UserRepository repository) {
+    public UserServiceImpl(UserRepository repository, AuthenticationService authenticationService) {
         this.repository = repository;
+        this.authenticationService = authenticationService;
     }
 
     public UserWithJwtRepresentation registerOrLogin(String googleIdToken) {
-        GoogleIdToken.Payload payload = new AuthenticationService().verifyIdTokenAndGetPayload(googleIdToken);
-        String googleUserId = payload.getSubject();
-        String googleName = (String) payload.get("name");
+        AuthenticationServiceImpl.GoogleUser googleUser = authenticationService.verifyIdTokenAndGetPayload(googleIdToken);
 
-        return repository.findByGoogleUserId(googleUserId)
+        return repository.findByGoogleUserId(googleUser.getGoogleUserId())
                 .map(userFound -> new UserWithJwtRepresentation(userFound, JwtService.encode(userFound.getId())))
-                .orElseGet(() -> register(googleUserId, googleName));
+                .orElseGet(() -> register(googleUser.getGoogleUserId(), googleUser.getGoogleName()));
     }
 
     private UserWithJwtRepresentation register(String googleUserId, String googleName) {

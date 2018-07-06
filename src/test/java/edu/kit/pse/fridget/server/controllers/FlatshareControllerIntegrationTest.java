@@ -15,7 +15,7 @@ public class FlatshareControllerIntegrationTest extends AbstractControllerIntegr
     private static final String FLATSHARE_NAME = "An Awesome Flatshare";
 
     @Test
-    public void getFlatshare_ReturnsCorrectResponse() {
+    public void getFlatshare() {
         ResponseEntity<Flatshare> response = getTestRestTemplate().getForEntity(String.format("/flatshares/%s", FLATSHARE_ID),
                 Flatshare.class);
 
@@ -28,7 +28,7 @@ public class FlatshareControllerIntegrationTest extends AbstractControllerIntegr
     }
 
     @Test
-    public void saveFlatshare_ReturnsCorrectResponse() throws Exception {
+    public void saveFlatshare() throws Exception {
         ResponseEntity<Flatshare> response = getTestRestTemplate().postForEntity("/flatshares",
                 getFixture("saveFlatshareCommand.json", SaveFlatshareCommand.class), Flatshare.class);
 
