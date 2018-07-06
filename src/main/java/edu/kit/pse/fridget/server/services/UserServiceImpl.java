@@ -24,14 +24,14 @@ public class UserServiceImpl implements UserService {
         String googleName = (String) payload.get("name");
 
         return repository.findByGoogleUserId(googleUserId)
-                .map(userFound -> new UserWithJwtRepresentation(userFound, "JWT"))
+                .map(userFound -> new UserWithJwtRepresentation(userFound, JwtService.encode(userFound.getId())))
                 .orElseGet(() -> register(googleUserId, googleName));
     }
 
     private UserWithJwtRepresentation register(String googleUserId, String googleName) {
         User newUser = User.buildNew(googleUserId, googleName);
-        repository.save(newUser);
+        String userId = repository.save(newUser).getId();
 
-        return new UserWithJwtRepresentation(newUser, "JWT");
+        return new UserWithJwtRepresentation(newUser, JwtService.encode(userId));
     }
 }

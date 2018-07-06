@@ -25,9 +25,11 @@ public class AuthenticationService {
         GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory).build();
 
         try {
-            return Optional.ofNullable(verifier.verify(idTokenString)).orElseThrow(UnauthorizedException::buildForBrokenToken).getPayload();
+            return Optional.ofNullable(verifier.verify(idTokenString))
+                    .orElseThrow(UnauthorizedException::buildForBrokenIdToken)
+                    .getPayload();
         } catch (GeneralSecurityException e) {
-            throw UnauthorizedException.buildForBrokenToken();
+            throw UnauthorizedException.buildForBrokenIdToken();
         } catch (IOException e) {
             throw UnauthorizedException.buildForConnectionProblem();
         }
