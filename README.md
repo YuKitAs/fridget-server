@@ -5,7 +5,7 @@ The server-side of [Fridget](https://github.com/YuKitAs/fridget-android) built w
 **Usage**
 
 * Make sure MySQL (>= 5.5) is installed and running.
-* Specify spring configurations for development environment in `src/main/resources/application.yml`.
+* Configure datenbank according to spring configurations for development environment specified in `src/main/resources/application.yml`.
 * Run the following Bash script to execute Gradle `bootRun` task with Spring profile `development`:
   ```console
   $ ./build.sh
