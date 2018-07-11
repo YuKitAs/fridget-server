@@ -10,6 +10,7 @@ The server-side of [Fridget](https://github.com/YuKitAs/fridget-android) built w
   ```console
   $ ./build.sh
   ```
+* The server will be running by default under `http://localhost:8080`
 
 **TODO**
 
