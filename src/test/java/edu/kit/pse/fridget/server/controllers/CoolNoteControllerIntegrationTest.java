@@ -12,6 +12,7 @@ import java.time.Month;
 import java.time.ZoneId;
 
 import edu.kit.pse.fridget.server.models.CoolNote;
+import edu.kit.pse.fridget.server.utilities.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -71,7 +72,7 @@ public class CoolNoteControllerIntegrationTest extends AbstractControllerIntegra
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getHeaders().getContentType().includes(MediaType.APPLICATION_JSON_UTF8)).isTrue();
         assertThat(response.getBody()).satisfies(coolNote -> {
-            assertThat(coolNote.getId()).matches(UUID_PATTERN);
+            assertThat(coolNote.getId()).matches(Pattern.UUID_PATTERN);
             assertThat(coolNote.getTitle()).isEqualTo("Goodbye");
             assertThat(coolNote.getContent()).isEqualTo("Goodbye world!");
             assertThat(coolNote.getImportance()).isEqualTo(0);

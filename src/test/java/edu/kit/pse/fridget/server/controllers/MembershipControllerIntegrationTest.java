@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import edu.kit.pse.fridget.server.models.Membership;
 import edu.kit.pse.fridget.server.models.commands.SaveMembershipCommand;
 import edu.kit.pse.fridget.server.models.representations.UserMembershipRepresentation;
+import edu.kit.pse.fridget.server.utilities.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,7 +29,7 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
         assertThat(response.getHeaders().getContentType().includes(MediaType.APPLICATION_JSON_UTF8)).isTrue();
         assertThat(userMembershipRepresentations.length).isEqualTo(3);
         assertThat(userMembershipRepresentations[0]).satisfies(representation -> {
-            assertThat(representation.getMembershipId()).matches(UUID_PATTERN);
+            assertThat(representation.getMembershipId()).matches(Pattern.UUID_PATTERN);
             assertThat(representation.getMagnetColor()).matches(MAGNET_COLOR);
             assertThat(representation.getGoogleName()).isEqualTo(GOOGLE_NAME);
         });
@@ -42,7 +43,7 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getHeaders().getContentType().includes(MediaType.APPLICATION_JSON_UTF8)).isTrue();
         assertThat(response.getBody()).satisfies(representation -> {
-            assertThat(representation.getMembershipId()).matches(UUID_PATTERN);
+            assertThat(representation.getMembershipId()).matches(Pattern.UUID_PATTERN);
             assertThat(representation.getMagnetColor()).matches(MAGNET_COLOR);
             assertThat(representation.getGoogleName()).isEqualTo(GOOGLE_NAME);
         });
@@ -56,10 +57,10 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getHeaders().getContentType().includes(MediaType.APPLICATION_JSON_UTF8)).isTrue();
         assertThat(response.getBody()).satisfies(representation -> {
-            assertThat(representation.getId()).matches(UUID_PATTERN);
+            assertThat(representation.getId()).matches(Pattern.UUID_PATTERN);
             assertThat(representation.getFlatshareId()).isEqualTo("00000000-0000-0000-0000-000000000000");
             assertThat(representation.getUserId()).isEqualTo("00000000-0000-0000-0000-000000000002");
-            assertThat(representation.getMagnetColor()).matches("[0-9a-f]{6}");
+            assertThat(representation.getMagnetColor()).matches(Pattern.HEX_COLOR_CODE_PATTERN);
         });
     }
 

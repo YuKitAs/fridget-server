@@ -12,7 +12,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.io.File;
 
@@ -32,8 +31,6 @@ public abstract class AbstractControllerIntegrationTest {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
-
-    final String UUID_PATTERN = "[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}";
 
     TestRestTemplate getTestRestTemplate() {
         return testRestTemplate;

@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import edu.kit.pse.fridget.server.models.AccessCode;
+import edu.kit.pse.fridget.server.utilities.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,9 +21,9 @@ public class AccessCodeControllerIntegrationTest extends AbstractControllerInteg
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getHeaders().getContentType().includes(MediaType.APPLICATION_JSON_UTF8)).isTrue();
         assertThat(response.getBody()).satisfies(accessCode -> {
-            assertThat(accessCode.getId()).matches(UUID_PATTERN);
+            assertThat(accessCode.getId()).matches(Pattern.UUID_PATTERN);
             assertThat(accessCode.getFlatshareId()).isEqualTo(FLATSHARE_ID);
-            assertThat(accessCode.getContent()).matches("[0-9a-zA-Z]{5}");
+            assertThat(accessCode.getContent()).matches(Pattern.ACCESS_CODE_PATTERN);
         });
     }
 }

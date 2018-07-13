@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 
 import edu.kit.pse.fridget.server.models.Membership;
 import edu.kit.pse.fridget.server.models.ReadConfirmation;
+import edu.kit.pse.fridget.server.utilities.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,8 +28,8 @@ public class ReadConfirmationControllerIntegrationTest extends AbstractControlle
         assertThat(memberships.length).isEqualTo(1);
         assertThat(memberships[0]).satisfies(membership -> {
             assertThat(membership.getId()).isEqualTo(MEMBERSHIP_ID);
-            assertThat(membership.getFlatshareId()).matches(UUID_PATTERN);
-            assertThat(membership.getUserId()).matches(UUID_PATTERN);
+            assertThat(membership.getFlatshareId()).matches(Pattern.UUID_PATTERN);
+            assertThat(membership.getUserId()).matches(Pattern.UUID_PATTERN);
             assertThat(membership.getMagnetColor()).isEqualTo(MAGNET_COLOR);
         });
     }
@@ -41,7 +42,7 @@ public class ReadConfirmationControllerIntegrationTest extends AbstractControlle
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getHeaders().getContentType().includes(MediaType.APPLICATION_JSON_UTF8)).isTrue();
         assertThat(response.getBody()).satisfies(readConfirmation -> {
-            assertThat(readConfirmation.getId()).matches(UUID_PATTERN);
+            assertThat(readConfirmation.getId()).matches(Pattern.UUID_PATTERN);
             assertThat(readConfirmation.getCoolNoteId()).isEqualTo(COOL_NOTE_ID);
             assertThat(readConfirmation.getMembershipId()).isEqualTo("00000000-0000-0000-0000-000000000002");
         });
