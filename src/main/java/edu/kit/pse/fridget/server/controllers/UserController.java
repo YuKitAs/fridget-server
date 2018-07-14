@@ -4,10 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.kit.pse.fridget.server.models.User;
 import edu.kit.pse.fridget.server.models.representations.UserWithJwtRepresentation;
 import edu.kit.pse.fridget.server.services.UserService;
 
@@ -21,8 +23,13 @@ public class UserController {
         this.service = service;
     }
 
-    @PostMapping
+/*    @PostMapping
     public ResponseEntity<UserWithJwtRepresentation> registerOrLogin(@RequestHeader("Id-Token") String googleIdToken) {
         return new ResponseEntity<>(service.registerOrLogin(googleIdToken), HttpStatus.CREATED);
+    }*/
+
+    @PostMapping
+    public ResponseEntity<UserWithJwtRepresentation> registerOrLogin(@RequestBody User user) {
+        return new ResponseEntity<>(service.registerOrLogin(user), HttpStatus.CREATED);
     }
 }

@@ -18,12 +18,18 @@ public class UserServiceImpl implements UserService {
         this.authenticationService = authenticationService;
     }
 
-    public UserWithJwtRepresentation registerOrLogin(String googleIdToken) {
+/*    public UserWithJwtRepresentation registerOrLogin(String googleIdToken) {
         AuthenticationServiceImpl.GoogleUser googleUser = authenticationService.verifyIdTokenAndGetPayload(googleIdToken);
 
         return repository.findByGoogleUserId(googleUser.getGoogleUserId())
                 .map(userFound -> new UserWithJwtRepresentation(userFound, JwtService.encode(userFound.getId())))
                 .orElseGet(() -> register(googleUser.getGoogleUserId(), googleUser.getGoogleName()));
+    }*/
+
+    public UserWithJwtRepresentation registerOrLogin(User user) {
+        return repository.findByGoogleUserId(user.getGoogleUserId())
+                .map(userFound -> new UserWithJwtRepresentation(userFound, JwtService.encode(userFound.getId())))
+                .orElseGet(() -> register(user.getGoogleUserId(), user.getGoogleName()));
     }
 
     private UserWithJwtRepresentation register(String googleUserId, String googleName) {
