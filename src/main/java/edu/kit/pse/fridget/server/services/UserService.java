@@ -4,7 +4,7 @@ import edu.kit.pse.fridget.server.models.User;
 import edu.kit.pse.fridget.server.models.representations.UserWithJwtRepresentation;
 
 public interface UserService {
-    // UserWithJwtRepresentation registerOrLogin(String googleIdToken);
+    UserWithJwtRepresentation registerOrLoginWithIdToken(String googleIdToken);
 
     UserWithJwtRepresentation registerOrLogin(User user);
 }
