@@ -6,7 +6,9 @@ The server-side of [Fridget](https://github.com/YuKitAs/fridget-android) built w
 
 ## Prerequisite
 
-* Make sure MySQL (>= 5.5, < 8.0) is installed and running
+* MySQL (>= 5.5, < 8.0) is installed and running
+* JDK 1.8 is installed
+* Port `8080` is not in use
 
 ### Development
 
