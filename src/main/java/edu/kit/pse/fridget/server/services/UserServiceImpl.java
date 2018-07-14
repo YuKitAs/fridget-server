@@ -10,12 +10,10 @@ import edu.kit.pse.fridget.server.repositories.UserRepository;
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository repository;
-    private final AuthenticationService authenticationService;
 
     @Autowired
-    public UserServiceImpl(UserRepository repository, AuthenticationService authenticationService) {
+    public UserServiceImpl(UserRepository repository) {
         this.repository = repository;
-        this.authenticationService = authenticationService;
     }
 
 /*    public UserWithJwtRepresentation registerOrLogin(String googleIdToken) {
