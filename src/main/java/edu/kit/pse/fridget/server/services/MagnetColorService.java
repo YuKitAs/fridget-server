@@ -13,10 +13,9 @@ import edu.kit.pse.fridget.server.repositories.MembershipRepository;
 
 @Service
 public class MagnetColorService {
+    private static final String[] COLORS = {"6ddbff", "0054ff", "66666b", "cc0cf9", "cc0099", "7b1100", "ff0000", "ff9900", "f9f22a",
+            "0eac0e", "006600", "009999", "ffcccc", "ffffff", "bdbdbd"};
     private final MembershipRepository membershipRepository;
-
-    private final String[] colors = {"0099cc", "0000ff", "666699", "cc00ff", "cc0099", "990033", "ff0000", "ff9900", "cccc00", "009900",
-            "006600", "009999", "ffcccc", "ffffff", "996633"};
 
     @Autowired
     public MagnetColorService(MembershipRepository membershipRepository) {
@@ -24,16 +23,16 @@ public class MagnetColorService {
     }
 
     String getRandomColor() {
-        return colors[new Random().nextInt(15)];
+        return COLORS[new Random().nextInt(15)];
     }
 
-    String getRandomColor(String flatshareId) {
+    String getAvailableRandomColor(String flatshareId) {
         List<String> magnetColors = membershipRepository.findByFlatshareId(flatshareId)
                 .stream()
                 .map(Membership::getMagnetColor)
                 .collect(Collectors.toList());
 
-        List<String> availableColors = Arrays.stream(colors)
+        List<String> availableColors = Arrays.stream(COLORS)
                 .collect(Collectors.toList())
                 .stream()
                 .filter(color -> !magnetColors.contains(color))

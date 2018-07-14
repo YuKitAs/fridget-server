@@ -79,7 +79,7 @@ public class MembershipServiceTest {
         when(userRepository.getOne(userId0)).thenReturn(user0);
         when(userRepository.getOne(userId1)).thenReturn(user1);
         when(accessCodeRepository.findByContent(ACCESS_CODE_CONTENT)).thenReturn(AccessCode.buildNew(ACCESS_CODE_CONTENT, FLATSHARE_ID));
-        when(magnetColorService.getRandomColor(FLATSHARE_ID)).thenReturn(MAGNET_COLOR_1);
+        when(magnetColorService.getAvailableRandomColor(FLATSHARE_ID)).thenReturn(MAGNET_COLOR_1);
     }
 
     @Test

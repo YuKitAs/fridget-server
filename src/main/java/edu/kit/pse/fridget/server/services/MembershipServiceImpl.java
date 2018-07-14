@@ -49,8 +49,7 @@ public class MembershipServiceImpl implements MembershipService {
 
         return saveMembership(membershipBuilder.setRandomId()
                 .setUserId(userId)
-                .setFlatshareId(flatshareId)
-                .setMagnetColor(magnetColorService.getRandomColor(flatshareId))
+                .setFlatshareId(flatshareId).setMagnetColor(magnetColorService.getAvailableRandomColor(flatshareId))
                 .build());
     }
 
