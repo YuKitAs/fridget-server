@@ -27,9 +27,4 @@ public class UserController {
     public ResponseEntity<UserWithJwtRepresentation> registerOrLoginWithIdToken(@RequestParam("idToken") String googleIdToken) {
         return new ResponseEntity<>(service.registerOrLoginWithIdToken(googleIdToken), HttpStatus.CREATED);
     }
-
-    @PostMapping
-    public ResponseEntity<UserWithJwtRepresentation> registerOrLogin(@RequestBody User user) {
-        return new ResponseEntity<>(service.registerOrLogin(user), HttpStatus.CREATED);
-    }
 }

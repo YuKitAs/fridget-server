@@ -28,7 +28,11 @@ The server-side of [Fridget](https://github.com/YuKitAs/fridget-android) built w
   ```console
   $ ./gradlew integrationTest
   ```
-  
+* Run the following Bash script for all tests:
+  ```console
+  $ ./test.sh
+  ```
+
 ## TODO
 
 See cards on [project board](https://github.com/YuKitAs/fridget-android/projects/3)

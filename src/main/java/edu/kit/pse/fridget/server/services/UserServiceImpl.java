@@ -26,12 +26,6 @@ public class UserServiceImpl implements UserService {
                 .orElseGet(() -> register(googleUser.getGoogleUserId(), googleUser.getGoogleName()));
     }
 
-    public UserWithJwtRepresentation registerOrLogin(User user) {
-        return repository.findByGoogleUserId(user.getGoogleUserId())
-                .map(userFound -> new UserWithJwtRepresentation(userFound, JwtService.encode(userFound.getId())))
-                .orElseGet(() -> register(user.getGoogleUserId(), user.getGoogleName()));
-    }
-
     private UserWithJwtRepresentation register(String googleUserId, String googleName) {
         User newUser = User.buildNew(googleUserId, googleName);
         String userId = repository.save(newUser).getId();
