@@ -16,7 +16,7 @@ before_script:
   - sudo mysql_upgrade
   - sudo service mysql restart
   - mysql -u root -e "CREATE USER 'testuser'@'localhost' IDENTIFIED BY 'n0password';"
-  - mysql -u root -e "GRANT ALL ON PRIVILEGES ON *.* TO 'testuser'@'localhost';"
+  - mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'testuser'@'localhost';"
   - mysql -e "CREATE DATABASE IF NOT EXISTS fridget_test;"
 
 script:
