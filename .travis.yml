@@ -20,7 +20,8 @@ before_script:
   - mysql -e "CREATE DATABASE IF NOT EXISTS fridget_test;"
 
 script:
-  - ./test.sh jacocoTestReport
+  - ./test.sh
   - ./gradlew check
 
-after_success: coveralls
+after_success: 
+  - ./gradlew jacocoTestReport coveralls
