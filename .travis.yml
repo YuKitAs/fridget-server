@@ -15,7 +15,9 @@ before_script:
   - sudo mysql -e "use mysql; update user set authentication_string=PASSWORD('') where User='root'; update user set plugin='mysql_native_password';FLUSH PRIVILEGES;"
   - sudo mysql_upgrade
   - sudo service mysql restart
-  - mysql -e 'CREATE DATABASE IF NOT EXISTS fridget_test;'
+  - mysql -u root -e "CREATE USER 'testuser'@'localhost' IDENTIFIED BY 'n0password';"
+  - mysql -u root -e "GRANT ALL ON PRIVILEGES ON *.* TO 'testuser'@'localhost';"
+  - mysql -e "CREATE DATABASE IF NOT EXISTS fridget_test;"
 
 script:
   - ./test.sh
