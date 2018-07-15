@@ -2,11 +2,9 @@ package edu.kit.pse.fridget.server.services;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,14 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ReadConfirmationServiceTest {
-    private static final String COOL_NOTE_ID = "00000000-0000-0000-0000-000000000000";
-    private static final String FLATSHARE_ID = "00000000-0000-0000-0000-000000000000";
-    private static final String USER_ID_0 = "00000000-0000-0000-0000-000000000000";
-    private static final String USER_ID_1 = "00000000-0000-0000-0000-000000000001";
-    private static final String MAGNET_COLOR_0 = "0099cc";
-    private static final String MAGNET_COLOR_1 = "ffffff";
+public class ReadConfirmationServiceTest extends AbstractServiceTest {
     @InjectMocks
     private ReadConfirmationServiceImpl service;
     @Mock
@@ -36,22 +27,16 @@ public class ReadConfirmationServiceTest {
     @Mock
     private MembershipRepository membershipRepository;
 
+    private Membership membership0;
+    private Membership membership1;
     private String membershipId0;
     private String membershipId1;
     private List<ReadConfirmation> readConfirmations = new ArrayList<>();
 
     @Before
-    public void setUp() {
-        Membership membership0 = new Membership.Builder().setRandomId()
-                .setFlatshareId(FLATSHARE_ID)
-                .setUserId(USER_ID_0)
-                .setMagnetColor(MAGNET_COLOR_0)
-                .build();
-        Membership membership1 = new Membership.Builder().setRandomId()
-                .setFlatshareId(FLATSHARE_ID)
-                .setUserId(USER_ID_1)
-                .setMagnetColor(MAGNET_COLOR_1)
-                .build();
+    public void setUp() throws Exception {
+        membership0 = getFixture("membership0.json", Membership.class);
+        membership1 = getFixture("membership1.json", Membership.class);
         membershipId0 = membership0.getId();
         membershipId1 = membership1.getId();
 
@@ -68,18 +53,8 @@ public class ReadConfirmationServiceTest {
         List<Membership> memberships = service.getAllMemberships(COOL_NOTE_ID);
 
         assertThat(memberships.size()).isEqualTo(2);
-
-        Membership membership0 = memberships.get(0);
-        Membership membership1 = memberships.get(1);
-
-        assertThat(membership0.getId()).isEqualTo(membershipId0);
-        assertThat(membership0.getFlatshareId()).isEqualTo(FLATSHARE_ID);
-        assertThat(membership0.getUserId()).isEqualTo(USER_ID_0);
-        assertThat(membership0.getMagnetColor()).isEqualTo(MAGNET_COLOR_0);
-        assertThat(membership1.getId()).isEqualTo(membershipId1);
-        assertThat(membership1.getFlatshareId()).isEqualTo(FLATSHARE_ID);
-        assertThat(membership1.getUserId()).isEqualTo(USER_ID_1);
-        assertThat(membership1.getMagnetColor()).isEqualTo(MAGNET_COLOR_1);
+        assertThat(memberships.get(0)).isEqualTo(membership0);
+        assertThat(memberships.get(1)).isEqualTo(membership1);
     }
 
     @Test

@@ -2,10 +2,8 @@ package edu.kit.pse.fridget.server.services;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,12 +15,7 @@ import edu.kit.pse.fridget.server.utilities.Pattern;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class MagnetColorServiceTest {
-    private static final String FLATSHARE_ID = "00000000-0000-0000-0000-000000000000";
-    private static final String MAGNET_COLOR_0 = "6ddbff";
-    private static final String MAGNET_COLOR_1 = "ffffff";
-    private static final String MAGNET_COLOR_2 = "0054ff";
+public class MagnetColorServiceTest extends AbstractServiceTest {
     @InjectMocks
     private MagnetColorService service;
     @Mock
@@ -33,18 +26,15 @@ public class MagnetColorServiceTest {
         List<Membership> memberships = new ArrayList<>();
 
         memberships.add(new Membership.Builder().setRandomId()
-                .setFlatshareId(FLATSHARE_ID)
-                .setUserId("00000000-0000-0000-0000-000000000000")
+                .setFlatshareId(FLATSHARE_ID).setUserId(USER_ID_0)
                 .setMagnetColor(MAGNET_COLOR_0)
                 .build());
         memberships.add(new Membership.Builder().setRandomId()
-                .setFlatshareId(FLATSHARE_ID)
-                .setUserId("00000000-0000-0000-0000-000000000001")
+                .setFlatshareId(FLATSHARE_ID).setUserId(USER_ID_1)
                 .setMagnetColor(MAGNET_COLOR_1)
                 .build());
         memberships.add(new Membership.Builder().setRandomId()
-                .setFlatshareId(FLATSHARE_ID)
-                .setUserId("00000000-0000-0000-0000-000000000002")
+                .setFlatshareId(FLATSHARE_ID).setUserId(USER_ID_2)
                 .setMagnetColor(MAGNET_COLOR_2)
                 .build());
 

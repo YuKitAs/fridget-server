@@ -18,7 +18,7 @@ public class UserMembershipRepresentationTest {
         final String GOOGLE_NAME = "John Doe";
 
         User user = User.buildNew("valid-google-id-0", GOOGLE_NAME);
-        Membership membership = new ObjectMapper().readValue(new File("src/test/resources/fixtures/membership.json"), Membership.class);
+        Membership membership = new ObjectMapper().readValue(new File("src/test/resources/fixtures/membership0.json"), Membership.class);
 
         UserMembershipRepresentation userMembershipRepresentation = UserMembershipRepresentation.buildFromUserAndMembership(user,
                 membership);

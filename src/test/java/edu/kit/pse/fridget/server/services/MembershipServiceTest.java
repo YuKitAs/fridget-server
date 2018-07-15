@@ -2,11 +2,9 @@ package edu.kit.pse.fridget.server.services;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,15 +22,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class MembershipServiceTest {
-    private static final String FLATSHARE_ID = "00000000-0000-0000-0000-000000000000";
+public class MembershipServiceTest extends AbstractServiceTest {
     private static final String GOOGLE_USER_ID_0 = "valid-google-id-0";
     private static final String GOOGLE_USER_ID_1 = "valid-google-id-1";
     private static final String GOOGLE_NAME_0 = "John Doe";
     private static final String GOOGLE_NAME_1 = "Jane Doe";
-    private static final String MAGNET_COLOR_0 = "0099cc";
-    private static final String MAGNET_COLOR_1 = "ffffff";
     private static final String ACCESS_CODE_CONTENT = "abc42";
     @InjectMocks
     private MembershipServiceImpl membershipService;

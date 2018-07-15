@@ -2,11 +2,9 @@ package edu.kit.pse.fridget.server.services;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import edu.kit.pse.fridget.server.models.Flatshare;
 import edu.kit.pse.fridget.server.models.FrozenNote;
@@ -19,11 +17,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class FlatshareServiceTest {
+public class FlatshareServiceTest extends AbstractServiceTest {
     private static final String FLATSHARE_NAME = "An Awesome Flatshare";
-    private static final String USER_ID = "00000000-0000-0000-0000-000000000000";
-    private static final String MAGNET_COLOR = "0099cc";
     @InjectMocks
     private FlatshareServiceImpl flatshareService;
     @Mock
@@ -42,21 +37,21 @@ public class FlatshareServiceTest {
         createdFlatshare = Flatshare.buildNew(FLATSHARE_NAME);
 
         when(repository.save(createdFlatshare)).thenReturn(createdFlatshare);
-        when(magnetColorService.getRandomColor()).thenReturn(MAGNET_COLOR);
+        when(magnetColorService.getRandomColor()).thenReturn(MAGNET_COLOR_0);
     }
 
     @Test
     public void saveFlatshare_WithCorrectMembershipAndFrozenNotes() {
-        flatshareService.saveFlatshare(createdFlatshare, USER_ID);
+        flatshareService.saveFlatshare(createdFlatshare, USER_ID_0);
 
         ArgumentCaptor<Membership> membershipArgumentCaptor = ArgumentCaptor.forClass(Membership.class);
         verify(membershipService).saveMembership(membershipArgumentCaptor.capture());
 
         Membership membershipToSave = membershipArgumentCaptor.getValue();
         assertThat(membershipToSave.getId()).matches(Pattern.UUID_PATTERN);
-        assertThat(membershipToSave.getUserId()).isEqualTo(USER_ID);
+        assertThat(membershipToSave.getUserId()).isEqualTo(USER_ID_0);
         assertThat(membershipToSave.getFlatshareId()).isEqualTo(createdFlatshare.getId());
-        assertThat(membershipToSave.getMagnetColor()).isEqualTo(MAGNET_COLOR);
+        assertThat(membershipToSave.getMagnetColor()).isEqualTo(MAGNET_COLOR_0);
 
         ArgumentCaptor<FrozenNote> frozenNoteArgumentCaptor = ArgumentCaptor.forClass(FrozenNote.class);
         verify(frozenNoteService, times(3)).saveFrozenNote(frozenNoteArgumentCaptor.capture());
