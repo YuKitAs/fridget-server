@@ -10,11 +10,12 @@ addons:
     packages:
       - mysql-server
       - mysql-client
-before_install:
-  - mysql -e 'CREATE DATABASE IF NOT EXISTS fridget_test;'
-  - sudo mysql -e "use mysql; update user set authentication_string=PASSWORD('n0password') where User='testuser'; update user set plugin='mysql_native_password';FLUSH PRIVILEGES;"
+
+before_script:
+  - sudo mysql -e "use mysql; update user set authentication_string=PASSWORD('') where User='root'; update user set plugin='mysql_native_password';FLUSH PRIVILEGES;"
   - sudo mysql_upgrade
   - sudo service mysql restart
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS fridget_test;'
 
 script:
   - ./test.sh
