@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
+import edu.kit.pse.fridget.server.exceptions.ExceptionResponseBody;
 import edu.kit.pse.fridget.server.models.FrozenNote;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,6 +35,15 @@ public class FrozenNoteControllerIntegrationTest extends AbstractControllerInteg
     }
 
     @Test
+    public void getAllFrozenNotes_WithIncorrectFlatshareId() {
+        ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().getForEntity(
+                String.format("/frozen-notes?flatshare=%s", "incorrect-flatshare-id"), ExceptionResponseBody.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(response.getBody().getErrorMessage()).isEqualTo("Frozen Notes not found.");
+    }
+
+    @Test
     public void getFrozenNote() {
         ResponseEntity<FrozenNote> response = getTestRestTemplate().getForEntity(String.format("/frozen-notes/%s", FROZEN_NOTE_ID_0),
                 FrozenNote.class);
@@ -47,6 +57,15 @@ public class FrozenNoteControllerIntegrationTest extends AbstractControllerInteg
             assertThat(frozenNote.getContent()).isEmpty();
             assertThat(frozenNote.getPosition()).isEqualTo(FROZEN_NOTE_POSITION);
         });
+    }
+
+    @Test
+    public void getFrozenNote_WithIncorrectId() {
+        ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().getForEntity(
+                String.format("/frozen-notes/%s", "incorrect-id"), ExceptionResponseBody.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(response.getBody().getErrorMessage()).isEqualTo("Frozen Note id=\"incorrect-id\" not found.");
     }
 
     @Test

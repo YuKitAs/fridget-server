@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
+import edu.kit.pse.fridget.server.exceptions.ExceptionResponseBody;
 import edu.kit.pse.fridget.server.models.Membership;
 import edu.kit.pse.fridget.server.models.commands.SaveMembershipCommand;
 import edu.kit.pse.fridget.server.models.representations.UserMembershipRepresentation;
@@ -36,6 +37,15 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
     }
 
     @Test
+    public void getAllMembers_WithIncorrectFlatshareId() {
+        ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().getForEntity(
+                String.format("/memberships/users?flatshare=%s", "incorrect-flatshare-id"), ExceptionResponseBody.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(response.getBody().getErrorMessage()).isEqualTo("Memberships not found.");
+    }
+
+    @Test
     public void getMember() {
         ResponseEntity<UserMembershipRepresentation> response = getTestRestTemplate().getForEntity(
                 String.format("/memberships?flatshare=%s&user=%s", FLATSHARE_ID, USER_ID), UserMembershipRepresentation.class);
@@ -47,6 +57,24 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
             assertThat(representation.getMagnetColor()).matches(MAGNET_COLOR);
             assertThat(representation.getGoogleName()).isEqualTo(GOOGLE_NAME);
         });
+    }
+
+    @Test
+    public void getMember_WithIncorrectUserId() {
+        ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().getForEntity(
+                String.format("/memberships?flatshare=%s&user=%s", FLATSHARE_ID, "incorrect-user-id"), ExceptionResponseBody.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(response.getBody().getErrorMessage()).isEqualTo("User id=\"incorrect-user-id\" not found.");
+    }
+
+    @Test
+    public void getMember_WithIncorrectFlatshareId() {
+        ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().getForEntity(
+                String.format("/memberships?flatshare=%s&user=%s", "incorrect-flatshare-id", USER_ID), ExceptionResponseBody.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(response.getBody().getErrorMessage()).isEqualTo("Membership not found.");
     }
 
     @Test

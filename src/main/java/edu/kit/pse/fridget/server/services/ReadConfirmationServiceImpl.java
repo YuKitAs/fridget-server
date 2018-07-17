@@ -3,9 +3,11 @@ package edu.kit.pse.fridget.server.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import edu.kit.pse.fridget.server.exceptions.EntityNotFoundException;
 import edu.kit.pse.fridget.server.models.Membership;
 import edu.kit.pse.fridget.server.models.ReadConfirmation;
 import edu.kit.pse.fridget.server.repositories.MembershipRepository;
@@ -24,9 +26,12 @@ public class ReadConfirmationServiceImpl implements ReadConfirmationService {
 
     @Override
     public List<Membership> getAllMemberships(String coolNoteId) {
-        return readConfirmationRepository.findByCoolNoteId(coolNoteId)
-                .stream()
-                .map(readConfirmation -> membershipRepository.getOne(readConfirmation.getMembershipId()))
+        List<ReadConfirmation> readConfirmations = readConfirmationRepository.findByCoolNoteId(coolNoteId)
+                .orElseThrow(() -> new EntityNotFoundException("Read confirmations not found."));
+
+        return readConfirmations.isEmpty() ? new ArrayList<>() : readConfirmations.stream()
+                .map(readConfirmation -> membershipRepository.findById(readConfirmation.getMembershipId())
+                        .orElseThrow(() -> new EntityNotFoundException("Membership not found.")))
                 .collect(Collectors.toList());
     }
 

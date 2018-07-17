@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import edu.kit.pse.fridget.server.exceptions.EntityNotFoundException;
 import edu.kit.pse.fridget.server.models.FrozenNote;
 import edu.kit.pse.fridget.server.repositories.FrozenNoteRepository;
 
@@ -19,12 +20,12 @@ public class FrozenNoteServiceImpl implements FrozenNoteService {
 
     @Override
     public List<FrozenNote> getAllFrozenNotes(String flatshareId) {
-        return repository.findByFlatshareId(flatshareId);
+        return repository.findByFlatshareId(flatshareId).orElseThrow(() -> new EntityNotFoundException("Frozen Notes not found."));
     }
 
     @Override
     public FrozenNote getFrozenNote(String id) {
-        return repository.getOne(id);
+        return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Frozen Note", id));
     }
 
     @Override

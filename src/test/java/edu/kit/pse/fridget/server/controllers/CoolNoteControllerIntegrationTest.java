@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.ZoneId;
 
+import edu.kit.pse.fridget.server.exceptions.ExceptionResponseBody;
 import edu.kit.pse.fridget.server.models.CoolNote;
 import edu.kit.pse.fridget.server.utilities.Pattern;
 
@@ -47,6 +48,15 @@ public class CoolNoteControllerIntegrationTest extends AbstractControllerIntegra
     }
 
     @Test
+    public void getAllCoolNotes_WithIncorrectFlatshareId() {
+        ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().getForEntity(
+                String.format("/cool-notes?flatshare=%s", "incorrect-flatshare-id"), ExceptionResponseBody.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(response.getBody().getErrorMessage()).isEqualTo("Cool Notes not found.");
+    }
+
+    @Test
     public void getCoolNote() {
         ResponseEntity<CoolNote> response = getTestRestTemplate().getForEntity(String.format("/cool-notes/%s", COOL_NOTE_ID),
                 CoolNote.class);
@@ -62,6 +72,15 @@ public class CoolNoteControllerIntegrationTest extends AbstractControllerIntegra
             assertThat(coolNote.getPosition()).isEqualTo(POSITION);
             assertThat(coolNote.getCreatedAt()).isEqualTo(CREATED_AT);
         });
+    }
+
+    @Test
+    public void getCoolNote_WithIncorrectId() {
+        ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().getForEntity(String.format("/cool-notes/%s", "incorrect-id"),
+                ExceptionResponseBody.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(response.getBody().getErrorMessage()).isEqualTo("Cool Note id=\"incorrect-id\" not found.");
     }
 
     @Test

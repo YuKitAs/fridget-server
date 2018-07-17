@@ -31,6 +31,7 @@ public class FlatshareController {
 
     @PostMapping
     public ResponseEntity<Flatshare> saveFlatshare(@RequestBody SaveFlatshareCommand saveFlatshareCommand) {
-        return new ResponseEntity<>(service.saveFlatshare(saveFlatshareCommand.buildFlatshare(), saveFlatshareCommand.getUserId()), HttpStatus.CREATED);
+        return new ResponseEntity<>(service.saveFlatshare(saveFlatshareCommand.buildFlatshare(), saveFlatshareCommand.getUserId()),
+                HttpStatus.CREATED);
     }
 }

@@ -7,6 +7,7 @@ import org.mockito.Mock;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import edu.kit.pse.fridget.server.models.Membership;
 import edu.kit.pse.fridget.server.repositories.MembershipRepository;
@@ -25,20 +26,17 @@ public class MagnetColorServiceTest extends AbstractServiceTest {
     public void setUp() {
         List<Membership> memberships = new ArrayList<>();
 
-        memberships.add(new Membership.Builder().setRandomId()
-                .setFlatshareId(FLATSHARE_ID).setUserId(USER_ID_0)
+        memberships.add(new Membership.Builder().setRandomId().setFlatshareId(FLATSHARE_ID).setUserId(USER_ID_0)
                 .setMagnetColor(MAGNET_COLOR_0)
                 .build());
-        memberships.add(new Membership.Builder().setRandomId()
-                .setFlatshareId(FLATSHARE_ID).setUserId(USER_ID_1)
+        memberships.add(new Membership.Builder().setRandomId().setFlatshareId(FLATSHARE_ID).setUserId(USER_ID_1)
                 .setMagnetColor(MAGNET_COLOR_1)
                 .build());
-        memberships.add(new Membership.Builder().setRandomId()
-                .setFlatshareId(FLATSHARE_ID).setUserId(USER_ID_2)
+        memberships.add(new Membership.Builder().setRandomId().setFlatshareId(FLATSHARE_ID).setUserId(USER_ID_2)
                 .setMagnetColor(MAGNET_COLOR_2)
                 .build());
 
-        when(membershipRepository.findByFlatshareId(FLATSHARE_ID)).thenReturn(memberships);
+        when(membershipRepository.findByFlatshareId(FLATSHARE_ID)).thenReturn(Optional.of(memberships));
     }
 
     @Test

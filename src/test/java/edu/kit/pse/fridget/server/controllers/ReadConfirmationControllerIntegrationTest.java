@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
+import edu.kit.pse.fridget.server.exceptions.ExceptionResponseBody;
 import edu.kit.pse.fridget.server.models.Membership;
 import edu.kit.pse.fridget.server.models.ReadConfirmation;
 import edu.kit.pse.fridget.server.utilities.Pattern;
@@ -32,6 +33,15 @@ public class ReadConfirmationControllerIntegrationTest extends AbstractControlle
             assertThat(membership.getUserId()).matches(Pattern.UUID_PATTERN);
             assertThat(membership.getMagnetColor()).isEqualTo(MAGNET_COLOR);
         });
+    }
+
+    @Test
+    public void getAllMemberships_WithIncorrectCoolNoteId() {
+        ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().getForEntity(
+                String.format("/read-confirmations/users?cool-note=%s", "incorrect-cool-note-id"), ExceptionResponseBody.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(response.getBody().getErrorMessage()).isEqualTo("Read confirmations not found.");
     }
 
     @Test

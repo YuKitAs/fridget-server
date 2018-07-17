@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import edu.kit.pse.fridget.server.exceptions.EntityNotFoundException;
 import edu.kit.pse.fridget.server.models.Membership;
 import edu.kit.pse.fridget.server.repositories.MembershipRepository;
 
@@ -27,10 +28,10 @@ public class MagnetColorService {
     }
 
     String getAvailableRandomColor(String flatshareId) {
-        List<String> magnetColors = membershipRepository.findByFlatshareId(flatshareId)
-                .stream()
-                .map(Membership::getMagnetColor)
-                .collect(Collectors.toList());
+        List<Membership> memberships = membershipRepository.findByFlatshareId(flatshareId)
+                .orElseThrow(() -> new EntityNotFoundException("Membership not found."));
+
+        List<String> magnetColors = memberships.stream().map(Membership::getMagnetColor).collect(Collectors.toList());
 
         List<String> availableColors = Arrays.stream(COLORS)
                 .collect(Collectors.toList())

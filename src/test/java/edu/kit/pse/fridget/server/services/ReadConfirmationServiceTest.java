@@ -8,6 +8,7 @@ import org.mockito.Mock;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import edu.kit.pse.fridget.server.models.Membership;
 import edu.kit.pse.fridget.server.models.ReadConfirmation;
@@ -43,9 +44,9 @@ public class ReadConfirmationServiceTest extends AbstractServiceTest {
         readConfirmations.add(ReadConfirmation.buildNew(membershipId0, COOL_NOTE_ID));
         readConfirmations.add(ReadConfirmation.buildNew(membershipId1, COOL_NOTE_ID));
 
-        when(readConfirmationRepository.findByCoolNoteId(COOL_NOTE_ID)).thenReturn(readConfirmations);
-        when(membershipRepository.getOne(membershipId0)).thenReturn(membership0);
-        when(membershipRepository.getOne(membershipId1)).thenReturn(membership1);
+        when(readConfirmationRepository.findByCoolNoteId(COOL_NOTE_ID)).thenReturn(Optional.of(readConfirmations));
+        when(membershipRepository.findById(membershipId0)).thenReturn(Optional.of(membership0));
+        when(membershipRepository.findById(membershipId1)).thenReturn(Optional.of(membership1));
     }
 
     @Test

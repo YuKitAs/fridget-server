@@ -8,6 +8,7 @@ import org.mockito.Mock;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import edu.kit.pse.fridget.server.models.AccessCode;
 import edu.kit.pse.fridget.server.models.Membership;
@@ -43,7 +44,6 @@ public class MembershipServiceTest extends AbstractServiceTest {
     private String userId1;
     private String membershipId0;
     private String membershipId1;
-    private List<Membership> memberships = new ArrayList<>();
 
     @Before
     public void setUp() {
@@ -65,13 +65,14 @@ public class MembershipServiceTest extends AbstractServiceTest {
         membershipId0 = membership0.getId();
         membershipId1 = membership1.getId();
 
+        List<Membership> memberships = new ArrayList<>();
         memberships.add(membership0);
         memberships.add(membership1);
 
-        when(membershipRepository.findByFlatshareId(FLATSHARE_ID)).thenReturn(memberships);
-        when(membershipRepository.findByFlatshareIdAndUserId(FLATSHARE_ID, userId0)).thenReturn(membership0);
-        when(userRepository.getOne(userId0)).thenReturn(user0);
-        when(userRepository.getOne(userId1)).thenReturn(user1);
+        when(membershipRepository.findByFlatshareId(FLATSHARE_ID)).thenReturn(Optional.of(memberships));
+        when(membershipRepository.findByFlatshareIdAndUserId(FLATSHARE_ID, userId0)).thenReturn(Optional.of(membership0));
+        when(userRepository.findById(userId0)).thenReturn(Optional.of(user0));
+        when(userRepository.findById(userId1)).thenReturn(Optional.of(user1));
         when(accessCodeRepository.findByContent(ACCESS_CODE_CONTENT)).thenReturn(AccessCode.buildNew(ACCESS_CODE_CONTENT, FLATSHARE_ID));
         when(magnetColorService.getAvailableRandomColor(FLATSHARE_ID)).thenReturn(MAGNET_COLOR_1);
     }

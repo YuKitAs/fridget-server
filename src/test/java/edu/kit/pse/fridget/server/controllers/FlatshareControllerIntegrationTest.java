@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
+import edu.kit.pse.fridget.server.exceptions.ExceptionResponseBody;
 import edu.kit.pse.fridget.server.models.Flatshare;
 import edu.kit.pse.fridget.server.models.commands.SaveFlatshareCommand;
 import edu.kit.pse.fridget.server.utilities.Pattern;
@@ -26,6 +27,15 @@ public class FlatshareControllerIntegrationTest extends AbstractControllerIntegr
             assertThat(flatshare.getId()).isEqualTo(FLATSHARE_ID);
             assertThat(flatshare.getName()).isEqualTo(FLATSHARE_NAME);
         });
+    }
+
+    @Test
+    public void getFlatshre_WithIncorrectId() {
+        ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().getForEntity(String.format("/flatshares/%s", "incorrect-id"),
+                ExceptionResponseBody.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(response.getBody().getErrorMessage()).isEqualTo("Flatshare id=\"incorrect-id\" not found.");
     }
 
     @Test

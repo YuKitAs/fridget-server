@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import edu.kit.pse.fridget.server.exceptions.EntityNotFoundException;
 import edu.kit.pse.fridget.server.models.Membership;
+import edu.kit.pse.fridget.server.models.User;
 import edu.kit.pse.fridget.server.models.representations.UserMembershipRepresentation;
 import edu.kit.pse.fridget.server.repositories.AccessCodeRepository;
 import edu.kit.pse.fridget.server.repositories.MembershipRepository;
@@ -30,17 +32,23 @@ public class MembershipServiceImpl implements MembershipService {
 
     @Override
     public List<UserMembershipRepresentation> getAllMembers(String flatshareId) {
-        return membershipRepository.findByFlatshareId(flatshareId)
-                .stream()
-                .map(membership -> UserMembershipRepresentation.buildFromUserAndMembership(userRepository.getOne(membership.getUserId()),
+        List<Membership> memberships = membershipRepository.findByFlatshareId(flatshareId)
+                .orElseThrow(() -> new EntityNotFoundException("Memberships not found."));
+
+        return memberships.stream()
+                .map(membership -> UserMembershipRepresentation.buildFromUserAndMembership(
+                        userRepository.findById(membership.getUserId()).orElseThrow(() -> new EntityNotFoundException("User not found.")),
                         membership))
                 .collect(Collectors.toList());
     }
 
     @Override
     public UserMembershipRepresentation getMember(String flatshareId, String userId) {
-        return UserMembershipRepresentation.buildFromUserAndMembership(userRepository.getOne(userId),
-                membershipRepository.findByFlatshareIdAndUserId(flatshareId, userId));
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User", userId));
+        Membership membership = membershipRepository.findByFlatshareIdAndUserId(flatshareId, userId)
+                .orElseThrow(() -> new EntityNotFoundException("Membership not found."));
+
+        return UserMembershipRepresentation.buildFromUserAndMembership(user, membership);
     }
 
     @Override
@@ -49,7 +57,8 @@ public class MembershipServiceImpl implements MembershipService {
 
         return saveMembership(membershipBuilder.setRandomId()
                 .setUserId(userId)
-                .setFlatshareId(flatshareId).setMagnetColor(magnetColorService.getAvailableRandomColor(flatshareId))
+                .setFlatshareId(flatshareId)
+                .setMagnetColor(magnetColorService.getAvailableRandomColor(flatshareId))
                 .build());
     }
 

@@ -7,6 +7,7 @@ import org.mockito.Mock;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import edu.kit.pse.fridget.server.models.Membership;
 import edu.kit.pse.fridget.server.models.TaggedMember;
@@ -39,9 +40,9 @@ public class TaggedMemberServiceTest extends AbstractServiceTest {
         taggedMembers.add(TaggedMember.buildNew(membershipId0, COOL_NOTE_ID));
         taggedMembers.add(TaggedMember.buildNew(membershipId1, COOL_NOTE_ID));
 
-        when(taggedMemberRepository.findByCoolNoteId(COOL_NOTE_ID)).thenReturn(taggedMembers);
-        when(membershipRepository.getOne(membershipId0)).thenReturn(membership0);
-        when(membershipRepository.getOne(membershipId1)).thenReturn(membership1);
+        when(taggedMemberRepository.findByCoolNoteId(COOL_NOTE_ID)).thenReturn(Optional.of(taggedMembers));
+        when(membershipRepository.findById(membershipId0)).thenReturn(Optional.of(membership0));
+        when(membershipRepository.findById(membershipId1)).thenReturn(Optional.of(membership1));
     }
 
     @Test

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
+import edu.kit.pse.fridget.server.exceptions.EntityNotFoundException;
 import edu.kit.pse.fridget.server.models.Flatshare;
 import edu.kit.pse.fridget.server.models.FrozenNote;
 import edu.kit.pse.fridget.server.models.Membership;
@@ -29,7 +30,7 @@ public class FlatshareServiceImpl implements FlatshareService {
 
     @Override
     public Flatshare getFlatshare(String id) {
-        return flatshareRepository.getOne(id);
+        return flatshareRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Flatshare", id));
     }
 
     @Override
