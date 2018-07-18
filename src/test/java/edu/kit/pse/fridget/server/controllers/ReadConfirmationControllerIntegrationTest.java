@@ -59,12 +59,50 @@ public class ReadConfirmationControllerIntegrationTest extends AbstractControlle
     }
 
     @Test
+    public void saveReadConfirmation_WithIncorrectMembershipId_ReturnsUnprocessableEntity() {
+        ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().postForEntity("/read-confirmations",
+                ReadConfirmation.buildNew("incorrect-membership-id", COOL_NOTE_ID), ExceptionResponseBody.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+        assertThat(response.getBody().getErrorMessage()).isEqualTo("Request contains invalid data that cannot be processed.");
+    }
+
+    @Test
+    public void saveReadConfirmation_WithIncorrectCoolNoteId_ReturnsUnprocessableEntity() {
+        ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().postForEntity("/read-confirmations",
+                ReadConfirmation.buildNew("00000000-0000-0000-0000-000000000002", "incorrect-cool-note-id"), ExceptionResponseBody.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+        assertThat(response.getBody().getErrorMessage()).isEqualTo("Request contains invalid data that cannot be processed.");
+    }
+
+    @Test
     public void deleteReadConfirmation() {
         ResponseEntity<Void> response = getTestRestTemplate().exchange(
                 String.format("/read-confirmations?cool-note=%s&membership=%s", COOL_NOTE_ID, MEMBERSHIP_ID), HttpMethod.DELETE, null,
                 Void.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
         assertThat(response.getBody()).isNull();
+    }
+
+    @Test
+    public void deleteReadConfirmation_WithIncorrectCoolNoteId_ReturnsConflict() {
+        ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().exchange(
+                String.format("/read-confirmations?cool-note=%s&membership=%s", "incorrect-cool-note-id", MEMBERSHIP_ID), HttpMethod.DELETE,
+                null, ExceptionResponseBody.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        assertThat(response.getBody().getErrorMessage()).isEqualTo("Read confirmation cannot be deleted.");
+    }
+
+    @Test
+    public void deleteReadConfirmation_WithIncorrectMembershipId_ReturnsConflict() {
+        ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().exchange(
+                String.format("/read-confirmations?cool-note=%s&membership=%s", COOL_NOTE_ID, "incorrect-membership-id"), HttpMethod.DELETE,
+                null, ExceptionResponseBody.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        assertThat(response.getBody().getErrorMessage()).isEqualTo("Read confirmation cannot be deleted.");
     }
 }

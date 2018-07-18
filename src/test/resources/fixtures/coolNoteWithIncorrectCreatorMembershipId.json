@@ -1,8 +1,8 @@
 {
   "title": "Goodbye",
   "content": "Goodbye world!",
-  "creatorMembershipId": "00000000-0000-0000-0000-000000000000",
+  "creatorMembershipId": "incorrect-membership-id",
   "position": 1,
-  "importance": 0,
+  "importance": 1,
   "taggedMembershipIds": []
 }

@@ -30,7 +30,7 @@ public class FlatshareControllerIntegrationTest extends AbstractControllerIntegr
     }
 
     @Test
-    public void getFlatshre_WithIncorrectId() {
+    public void getFlatshre_WithIncorrectId_ReturnsNotFound() {
         ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().getForEntity(String.format("/flatshares/%s", "incorrect-id"),
                 ExceptionResponseBody.class);
 
@@ -49,5 +49,14 @@ public class FlatshareControllerIntegrationTest extends AbstractControllerIntegr
             assertThat(flatshare.getId()).matches(Pattern.UUID_PATTERN);
             assertThat(flatshare.getName()).isEqualTo("Another Awesome Flatshare");
         });
+    }
+
+    @Test
+    public void saveFlatshare_WithIncorrectUserId_ReturnsUnprocessableEntity() {
+        ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().postForEntity("/flatshares",
+                new SaveFlatshareCommand("incorrect-user-id", FLATSHARE_NAME), ExceptionResponseBody.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+        assertThat(response.getBody().getErrorMessage()).isEqualTo("Request contains invalid data that cannot be processed.");
     }
 }

@@ -6,10 +6,14 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
+import java.util.Optional;
+
 import edu.kit.pse.fridget.server.models.Flatshare;
 import edu.kit.pse.fridget.server.models.FrozenNote;
 import edu.kit.pse.fridget.server.models.Membership;
+import edu.kit.pse.fridget.server.models.User;
 import edu.kit.pse.fridget.server.repositories.FlatshareRepository;
+import edu.kit.pse.fridget.server.repositories.UserRepository;
 import edu.kit.pse.fridget.server.utilities.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,7 +26,9 @@ public class FlatshareServiceTest extends AbstractServiceTest {
     @InjectMocks
     private FlatshareServiceImpl flatshareService;
     @Mock
-    private FlatshareRepository repository;
+    private FlatshareRepository flatshareRepository;
+    @Mock
+    private UserRepository userRepository;
     @Mock
     private MembershipService membershipService;
     @Mock
@@ -36,12 +42,13 @@ public class FlatshareServiceTest extends AbstractServiceTest {
     public void setUp() {
         createdFlatshare = Flatshare.buildNew(FLATSHARE_NAME);
 
-        when(repository.save(createdFlatshare)).thenReturn(createdFlatshare);
+        when(userRepository.findById(USER_ID_0)).thenReturn(Optional.of(User.buildNew("dummy-id", "dummy-name")));
+        when(flatshareRepository.save(createdFlatshare)).thenReturn(createdFlatshare);
         when(magnetColorService.getRandomColor()).thenReturn(MAGNET_COLOR_0);
     }
 
     @Test
-    public void saveFlatshare_WithCorrectMembershipAndFrozenNotes() {
+    public void saveFlatshare() {
         flatshareService.saveFlatshare(createdFlatshare, USER_ID_0);
 
         ArgumentCaptor<Membership> membershipArgumentCaptor = ArgumentCaptor.forClass(Membership.class);

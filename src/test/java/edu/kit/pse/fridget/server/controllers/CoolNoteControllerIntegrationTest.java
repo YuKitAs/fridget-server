@@ -95,9 +95,27 @@ public class CoolNoteControllerIntegrationTest extends AbstractControllerIntegra
             assertThat(coolNote.getTitle()).isEqualTo("Goodbye");
             assertThat(coolNote.getContent()).isEqualTo("Goodbye world!");
             assertThat(coolNote.getImportance()).isEqualTo(0);
-            assertThat(coolNote.getPosition()).isEqualTo(0);
+            assertThat(coolNote.getPosition()).isEqualTo(1);
             assertThat(coolNote.getCreatedAt()).isNotNull();
         });
+    }
+
+    @Test
+    public void saveCoolNote_WithIncorrectCreatorMembershipId_ReturnsUnprocessableEntity() throws Exception {
+        ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().postForEntity("/cool-notes",
+                getFixture("coolNoteWithIncorrectCreatorMembershipId.json", CoolNote.class), ExceptionResponseBody.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+        assertThat(response.getBody().getErrorMessage()).isEqualTo("Request contains invalid data that cannot be processed.");
+    }
+
+    @Test
+    public void saveCoolNote_WithIncorrectPosition_ReturnsConflict() throws Exception {
+        ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().postForEntity("/cool-notes",
+                getFixture("coolNoteWithIncorrectPosition.json", CoolNote.class), ExceptionResponseBody.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        assertThat(response.getBody().getErrorMessage()).isEqualTo("Position 0 invalid.");
     }
 
     @Test
@@ -105,7 +123,16 @@ public class CoolNoteControllerIntegrationTest extends AbstractControllerIntegra
         ResponseEntity<Void> response = getTestRestTemplate().exchange(String.format("/cool-notes/%s", COOL_NOTE_ID), HttpMethod.DELETE,
                 null, Void.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
         assertThat(response.getBody()).isNull();
+    }
+
+    @Test
+    public void deleteCoolNote_WithIncorrectId_ReturnsConflict() {
+        ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().exchange(
+                String.format("/cool-notes/%s", "incorrect-cool-note-id"), HttpMethod.DELETE, null, ExceptionResponseBody.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        assertThat(response.getBody().getErrorMessage()).isEqualTo("Cool Note id=\"incorrect-cool-note-id\" cannot be deleted.");
     }
 }

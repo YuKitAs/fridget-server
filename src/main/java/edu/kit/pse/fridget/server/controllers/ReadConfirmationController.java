@@ -17,7 +17,6 @@ import javax.transaction.Transactional;
 
 import edu.kit.pse.fridget.server.models.Membership;
 import edu.kit.pse.fridget.server.models.ReadConfirmation;
-import edu.kit.pse.fridget.server.models.User;
 import edu.kit.pse.fridget.server.services.ReadConfirmationService;
 
 @RestController
@@ -46,6 +45,6 @@ public class ReadConfirmationController {
             @RequestParam("membership") String membershipId) {
         service.deleteReadConfirmation(coolNoteId, membershipId);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

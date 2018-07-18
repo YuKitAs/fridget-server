@@ -82,4 +82,28 @@ public class FrozenNoteControllerIntegrationTest extends AbstractControllerInteg
             assertThat(frozenNote.getContent()).isEqualTo("Bonbon");
         });
     }
+
+    @Test
+    public void updateFrozenNote_WithIncorrectFlatshareId_ReturnsUnprocessableEntity() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().exchange(String.format("/frozen-notes/%s", FROZEN_NOTE_ID_0),
+                HttpMethod.PUT, new HttpEntity<>(getFixture("frozenNoteWithIncorrectFlatshareId.json", FrozenNote.class), headers),
+                ExceptionResponseBody.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+        assertThat(response.getBody().getErrorMessage()).isEqualTo("Request contains invalid data that cannot be processed.");
+    }
+
+    @Test
+    public void updateFrozenNote_WithIncorrectPosition_ReturnsConflict() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().exchange(String.format("/frozen-notes/%s", FROZEN_NOTE_ID_0),
+                HttpMethod.PUT, new HttpEntity<>(getFixture("frozenNoteWithIncorrectPosition.json", FrozenNote.class), headers),
+                ExceptionResponseBody.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        assertThat(response.getBody().getErrorMessage()).isEqualTo("Position 1 invalid.");
+    }
 }

@@ -1,16 +1,17 @@
 package edu.kit.pse.fridget.server.exceptions;
 
-public class ExceptionResponseBody {
-    private String errorMessage;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-    ExceptionResponseBody() {
+public class ExceptionResponseBody {
+    private final String errorMessage;
+
+    @JsonCreator
+    ExceptionResponseBody(@JsonProperty("errorMessage") String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 
     public String getErrorMessage() {
         return errorMessage;
-    }
-
-    void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
     }
 }

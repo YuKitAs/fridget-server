@@ -93,11 +93,49 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
     }
 
     @Test
+    public void saveMembership_WithIncorrectAccessCode_ReturnsNotFound() {
+        ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().postForEntity("/memberships",
+                new SaveMembershipCommand("12345", "00000000-0000-0000-0000-000000000002"), ExceptionResponseBody.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(response.getBody().getErrorMessage()).isEqualTo("Access code 12345 not found.");
+    }
+
+    @Test
+    public void saveMembership_WithIncorrectUserId_ReturnsUnprocessableEntity() {
+        ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().postForEntity("/memberships",
+                new SaveMembershipCommand("abc42", "incorrect-user-id"), ExceptionResponseBody.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+        assertThat(response.getBody().getErrorMessage()).isEqualTo("Request contains invalid data that cannot be processed.");
+    }
+
+    @Test
     public void deleteMembership() {
         ResponseEntity<Void> response = getTestRestTemplate().exchange(
                 String.format("/memberships?flatshare=%s&user=%s", FLATSHARE_ID, USER_ID), HttpMethod.DELETE, null, Void.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
         assertThat(response.getBody()).isNull();
+    }
+
+    @Test
+    public void deleteMembership_WithIncorrectFlatshareId_ReturnsConflict() {
+        ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().exchange(
+                String.format("/memberships?flatshare=%s&user=%s", "incorrect-flatshare-id", USER_ID), HttpMethod.DELETE, null,
+                ExceptionResponseBody.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        assertThat(response.getBody().getErrorMessage()).isEqualTo("Membership cannot be deleted.");
+    }
+
+    @Test
+    public void deleteMembership_WithIncorrectUserId_ReturnsConflict() {
+        ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().exchange(
+                String.format("/memberships?flatshare=%s&user=%s", FLATSHARE_ID, "incorrect-user-id"), HttpMethod.DELETE, null,
+                ExceptionResponseBody.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        assertThat(response.getBody().getErrorMessage()).isEqualTo("Membership cannot be deleted.");
     }
 }

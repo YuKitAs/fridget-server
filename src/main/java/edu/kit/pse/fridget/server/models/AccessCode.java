@@ -1,22 +1,26 @@
 package edu.kit.pse.fridget.server.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.UUID;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
+
+import edu.kit.pse.fridget.server.utilities.Pattern;
 
 @Entity
 @Table(name = "access_codes")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class AccessCode {
     @Id
+    @JsonFormat(pattern = Pattern.UUID_PATTERN)
     private String id;
+    @JsonFormat(pattern = Pattern.ACCESS_CODE_PATTERN)
     private String content;
+    @JsonFormat(pattern = Pattern.UUID_PATTERN)
     private String flatshareId;
 
     public AccessCode() {

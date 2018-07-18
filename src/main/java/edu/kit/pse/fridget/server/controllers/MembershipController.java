@@ -52,6 +52,6 @@ public class MembershipController {
     public ResponseEntity<Void> deleteMembership(@RequestParam("flatshare") String flatshareId, @RequestParam("user") String userId) {
         service.deleteMembership(flatshareId, userId);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

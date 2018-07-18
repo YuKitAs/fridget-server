@@ -7,22 +7,26 @@ import java.util.UUID;
 import java.util.stream.IntStream;
 
 import edu.kit.pse.fridget.server.exceptions.EntityNotFoundException;
+import edu.kit.pse.fridget.server.exceptions.EntityUnprocessableException;
 import edu.kit.pse.fridget.server.models.Flatshare;
 import edu.kit.pse.fridget.server.models.FrozenNote;
 import edu.kit.pse.fridget.server.models.Membership;
 import edu.kit.pse.fridget.server.repositories.FlatshareRepository;
+import edu.kit.pse.fridget.server.repositories.UserRepository;
 
 @Service
 public class FlatshareServiceImpl implements FlatshareService {
     private final FlatshareRepository flatshareRepository;
+    private final UserRepository userRepository;
     private final MembershipService membershipService;
     private final FrozenNoteService frozenNoteService;
     private final MagnetColorService magnetColorService;
 
     @Autowired
-    public FlatshareServiceImpl(FlatshareRepository flatshareRepository, MembershipService membershipService,
+    public FlatshareServiceImpl(FlatshareRepository flatshareRepository, UserRepository userRepository, MembershipService membershipService,
             FrozenNoteService frozenNoteService, MagnetColorService magnetColorService) {
         this.flatshareRepository = flatshareRepository;
+        this.userRepository = userRepository;
         this.membershipService = membershipService;
         this.frozenNoteService = frozenNoteService;
         this.magnetColorService = magnetColorService;
@@ -35,6 +39,8 @@ public class FlatshareServiceImpl implements FlatshareService {
 
     @Override
     public Flatshare saveFlatshare(Flatshare flatshare, String userId) {
+        userRepository.findById(userId).orElseThrow(EntityUnprocessableException::new);
+
         Flatshare createdFlatshare = flatshareRepository.save(flatshare);
 
         membershipService.saveMembership(new Membership.Builder().setRandomId()

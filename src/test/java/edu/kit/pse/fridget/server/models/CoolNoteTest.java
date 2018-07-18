@@ -31,7 +31,7 @@ public class CoolNoteTest {
         assertThat(coolNoteForCreation.getTitle()).isEqualTo("Goodbye");
         assertThat(coolNoteForCreation.getContent()).isEqualTo("Goodbye world!");
         assertThat(coolNoteForCreation.getImportance()).isEqualTo(0);
-        assertThat(coolNoteForCreation.getPosition()).isEqualTo(0);
+        assertThat(coolNoteForCreation.getPosition()).isEqualTo(1);
         assertThat(coolNoteForCreation.getCreatedAt()).isNotNull();
         assertThat(coolNoteForCreation.getTaggedMembershipIds()).isEmpty();
     }
@@ -47,7 +47,7 @@ public class CoolNoteTest {
         assertThat(coolNoteForFetching.getTitle()).isEqualTo("Goodbye");
         assertThat(coolNoteForFetching.getContent()).isEqualTo("Goodbye world!");
         assertThat(coolNoteForFetching.getImportance()).isEqualTo(0);
-        assertThat(coolNoteForFetching.getPosition()).isEqualTo(0);
+        assertThat(coolNoteForFetching.getPosition()).isEqualTo(1);
         assertThat(coolNoteForFetching.getCreatedAt()).isNotNull();
         assertThat(coolNoteForFetching.getTaggedMembershipIds().size()).isEqualTo(2);
         assertThat(coolNoteForFetching.getTaggedMembershipIds()).contains(TAGGED_MEMBER_ID_0, TAGGED_MEMBER_ID_1);

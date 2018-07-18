@@ -7,20 +7,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import edu.kit.pse.fridget.server.exceptions.EntityConflictException;
 import edu.kit.pse.fridget.server.exceptions.EntityNotFoundException;
+import edu.kit.pse.fridget.server.exceptions.EntityUnprocessableException;
 import edu.kit.pse.fridget.server.models.CoolNote;
 import edu.kit.pse.fridget.server.models.TaggedMember;
 import edu.kit.pse.fridget.server.repositories.CoolNoteRepository;
+import edu.kit.pse.fridget.server.repositories.MembershipRepository;
 import edu.kit.pse.fridget.server.repositories.TaggedMemberRepository;
 
 @Service
 public class CoolNoteServiceImpl implements CoolNoteService {
     private final CoolNoteRepository coolNoteRepository;
+    private final MembershipRepository membershipRepository;
     private final TaggedMemberRepository taggedMemberRepository;
 
     @Autowired
-    public CoolNoteServiceImpl(CoolNoteRepository coolNoteRepository, TaggedMemberRepository taggedMemberRepository) {
+    public CoolNoteServiceImpl(CoolNoteRepository coolNoteRepository, MembershipRepository membershipRepository,
+            TaggedMemberRepository taggedMemberRepository) {
         this.coolNoteRepository = coolNoteRepository;
+        this.membershipRepository = membershipRepository;
         this.taggedMemberRepository = taggedMemberRepository;
     }
 
@@ -52,11 +58,23 @@ public class CoolNoteServiceImpl implements CoolNoteService {
 
     @Override
     public CoolNote saveCoolNote(CoolNote coolNote) {
+        membershipRepository.findById(coolNote.getCreatorMembershipId()).orElseThrow(EntityUnprocessableException::new);
+
+        if (coolNoteRepository.findAll()
+                .stream()
+                .map(CoolNote::getPosition)
+                .collect(Collectors.toList())
+                .contains(coolNote.getPosition())) {
+            throw new EntityConflictException(String.format("Position %s invalid.", coolNote.getPosition()));
+        }
+
         return coolNoteRepository.save(coolNote);
     }
 
     @Override
     public void deleteCoolNote(String id) {
+        coolNoteRepository.findById(id).orElseThrow(() -> new EntityConflictException("Cool Note", id));
+
         coolNoteRepository.deleteById(id);
     }
 }

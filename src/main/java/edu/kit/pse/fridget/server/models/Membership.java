@@ -1,5 +1,6 @@
 package edu.kit.pse.fridget.server.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.Objects;
@@ -9,13 +10,18 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import edu.kit.pse.fridget.server.utilities.Pattern;
+
 @Entity
 @Table(name = "memberships")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Membership {
     @Id
+    @JsonFormat(pattern = Pattern.UUID_PATTERN)
     private String id;
+    @JsonFormat(pattern = Pattern.UUID_PATTERN)
     private String userId;
+    @JsonFormat(pattern = Pattern.UUID_PATTERN)
     private String flatshareId;
     private String magnetColor;
 

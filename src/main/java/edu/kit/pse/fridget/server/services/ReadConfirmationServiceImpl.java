@@ -7,9 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import edu.kit.pse.fridget.server.exceptions.EntityConflictException;
 import edu.kit.pse.fridget.server.exceptions.EntityNotFoundException;
+import edu.kit.pse.fridget.server.exceptions.EntityUnprocessableException;
 import edu.kit.pse.fridget.server.models.Membership;
 import edu.kit.pse.fridget.server.models.ReadConfirmation;
+import edu.kit.pse.fridget.server.repositories.CoolNoteRepository;
 import edu.kit.pse.fridget.server.repositories.MembershipRepository;
 import edu.kit.pse.fridget.server.repositories.ReadConfirmationRepository;
 
@@ -17,11 +20,14 @@ import edu.kit.pse.fridget.server.repositories.ReadConfirmationRepository;
 public class ReadConfirmationServiceImpl implements ReadConfirmationService {
     private final ReadConfirmationRepository readConfirmationRepository;
     private final MembershipRepository membershipRepository;
+    private final CoolNoteRepository coolNoteRepository;
 
     @Autowired
-    public ReadConfirmationServiceImpl(ReadConfirmationRepository readConfirmationRepository, MembershipRepository membershipRepository) {
+    public ReadConfirmationServiceImpl(ReadConfirmationRepository readConfirmationRepository, MembershipRepository membershipRepository,
+            CoolNoteRepository coolNoteRepository) {
         this.readConfirmationRepository = readConfirmationRepository;
         this.membershipRepository = membershipRepository;
+        this.coolNoteRepository = coolNoteRepository;
     }
 
     @Override
@@ -37,12 +43,20 @@ public class ReadConfirmationServiceImpl implements ReadConfirmationService {
 
     @Override
     public ReadConfirmation saveReadConfirmation(ReadConfirmation readConfirmation) {
-        return readConfirmationRepository.save(
-                ReadConfirmation.buildNew(readConfirmation.getMembershipId(), readConfirmation.getCoolNoteId()));
+        String membershipId = readConfirmation.getMembershipId();
+        String coolNoteId = readConfirmation.getCoolNoteId();
+
+        membershipRepository.findById(membershipId).orElseThrow(EntityUnprocessableException::new);
+        coolNoteRepository.findById(coolNoteId).orElseThrow(EntityUnprocessableException::new);
+
+        return readConfirmationRepository.save(ReadConfirmation.buildNew(membershipId, coolNoteId));
     }
 
     @Override
     public void deleteReadConfirmation(String coolNoteId, String membershipId) {
+        readConfirmationRepository.findByCoolNoteIdAndMembershipId(coolNoteId, membershipId)
+                .orElseThrow(() -> new EntityConflictException("Read confirmation cannot be deleted."));
+
         readConfirmationRepository.deleteByCoolNoteIdAndMembershipId(coolNoteId, membershipId);
     }
 }

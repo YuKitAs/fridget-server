@@ -6,11 +6,15 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import edu.kit.pse.fridget.server.exceptions.EntityConflictException;
 import edu.kit.pse.fridget.server.exceptions.EntityNotFoundException;
+import edu.kit.pse.fridget.server.exceptions.EntityUnprocessableException;
+import edu.kit.pse.fridget.server.models.AccessCode;
 import edu.kit.pse.fridget.server.models.Membership;
 import edu.kit.pse.fridget.server.models.User;
 import edu.kit.pse.fridget.server.models.representations.UserMembershipRepresentation;
 import edu.kit.pse.fridget.server.repositories.AccessCodeRepository;
+import edu.kit.pse.fridget.server.repositories.FlatshareRepository;
 import edu.kit.pse.fridget.server.repositories.MembershipRepository;
 import edu.kit.pse.fridget.server.repositories.UserRepository;
 
@@ -19,14 +23,16 @@ public class MembershipServiceImpl implements MembershipService {
     private final MembershipRepository membershipRepository;
     private final UserRepository userRepository;
     private final AccessCodeRepository accessCodeRepository;
+    private final FlatshareRepository flatshareRepository;
     private final MagnetColorService magnetColorService;
 
     @Autowired
     public MembershipServiceImpl(MembershipRepository membershipRepository, UserRepository userRepository,
-            AccessCodeRepository accessCodeRepository, MagnetColorService magnetColorService) {
+            AccessCodeRepository accessCodeRepository, FlatshareRepository flatshareRepository, MagnetColorService magnetColorService) {
         this.membershipRepository = membershipRepository;
         this.userRepository = userRepository;
         this.accessCodeRepository = accessCodeRepository;
+        this.flatshareRepository = flatshareRepository;
         this.magnetColorService = magnetColorService;
     }
 
@@ -52,8 +58,13 @@ public class MembershipServiceImpl implements MembershipService {
     }
 
     @Override
-    public Membership saveMembership(String accessCode, String userId, Membership.Builder membershipBuilder) {
-        String flatshareId = accessCodeRepository.findByContent(accessCode).getFlatshareId();
+    public Membership saveMembership(String accessCodeContent, String userId, Membership.Builder membershipBuilder) {
+        AccessCode accessCode = accessCodeRepository.findByContent(accessCodeContent)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Access code %s not found.", accessCodeContent)));
+        String flatshareId = accessCode.getFlatshareId();
+
+        userRepository.findById(userId).orElseThrow(EntityUnprocessableException::new);
+        flatshareRepository.findById(flatshareId).orElseThrow(EntityUnprocessableException::new);
 
         return saveMembership(membershipBuilder.setRandomId()
                 .setUserId(userId)
@@ -69,6 +80,9 @@ public class MembershipServiceImpl implements MembershipService {
 
     @Override
     public void deleteMembership(String flatshareId, String userId) {
+        membershipRepository.findByFlatshareIdAndUserId(flatshareId, userId)
+                .orElseThrow(() -> new EntityConflictException("Membership cannot be deleted."));
+
         membershipRepository.deleteByFlatshareIdAndUserId(flatshareId, userId);
     }
 }

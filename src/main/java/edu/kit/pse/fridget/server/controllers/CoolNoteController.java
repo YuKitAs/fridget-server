@@ -59,6 +59,6 @@ public class CoolNoteController {
     public ResponseEntity<Void> deleteCoolNote(@PathVariable String id) {
         coolNoteService.deleteCoolNote(id);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

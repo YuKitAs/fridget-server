@@ -1,20 +1,28 @@
 package edu.kit.pse.fridget.server.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import edu.kit.pse.fridget.server.utilities.Pattern;
+
 @Entity
 @Table(name = "frozen_notes")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class FrozenNote {
     @Id
+    @JsonFormat(pattern = Pattern.UUID_PATTERN)
     private String id;
+    @JsonFormat(pattern = Pattern.UUID_PATTERN)
     private String flatshareId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private String title;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private String content;
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER_INT)
     private int position;
 
     public FrozenNote() {

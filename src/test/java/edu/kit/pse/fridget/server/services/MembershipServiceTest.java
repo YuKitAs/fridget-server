@@ -11,10 +11,12 @@ import java.util.List;
 import java.util.Optional;
 
 import edu.kit.pse.fridget.server.models.AccessCode;
+import edu.kit.pse.fridget.server.models.Flatshare;
 import edu.kit.pse.fridget.server.models.Membership;
 import edu.kit.pse.fridget.server.models.User;
 import edu.kit.pse.fridget.server.models.representations.UserMembershipRepresentation;
 import edu.kit.pse.fridget.server.repositories.AccessCodeRepository;
+import edu.kit.pse.fridget.server.repositories.FlatshareRepository;
 import edu.kit.pse.fridget.server.repositories.MembershipRepository;
 import edu.kit.pse.fridget.server.repositories.UserRepository;
 import edu.kit.pse.fridget.server.utilities.Pattern;
@@ -35,6 +37,8 @@ public class MembershipServiceTest extends AbstractServiceTest {
     private MembershipRepository membershipRepository;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private FlatshareRepository flatshareRepository;
     @Mock
     private AccessCodeRepository accessCodeRepository;
     @Mock
@@ -73,7 +77,9 @@ public class MembershipServiceTest extends AbstractServiceTest {
         when(membershipRepository.findByFlatshareIdAndUserId(FLATSHARE_ID, userId0)).thenReturn(Optional.of(membership0));
         when(userRepository.findById(userId0)).thenReturn(Optional.of(user0));
         when(userRepository.findById(userId1)).thenReturn(Optional.of(user1));
-        when(accessCodeRepository.findByContent(ACCESS_CODE_CONTENT)).thenReturn(AccessCode.buildNew(ACCESS_CODE_CONTENT, FLATSHARE_ID));
+        when(flatshareRepository.findById(FLATSHARE_ID)).thenReturn(Optional.of(Flatshare.buildNew("dummy-flatshare")));
+        when(accessCodeRepository.findByContent(ACCESS_CODE_CONTENT)).thenReturn(
+                Optional.of(AccessCode.buildNew(ACCESS_CODE_CONTENT, FLATSHARE_ID)));
         when(magnetColorService.getAvailableRandomColor(FLATSHARE_ID)).thenReturn(MAGNET_COLOR_1);
     }
 

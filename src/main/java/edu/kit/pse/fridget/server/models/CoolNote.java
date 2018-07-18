@@ -1,5 +1,6 @@
 package edu.kit.pse.fridget.server.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -13,17 +14,24 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import edu.kit.pse.fridget.server.services.ClockProvider;
+import edu.kit.pse.fridget.server.utilities.Pattern;
 
 @Entity
 @Table(name = "cool_notes")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class CoolNote {
     @Id
+    @JsonFormat(pattern = Pattern.UUID_PATTERN)
     private String id;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private String title;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private String content;
+    @JsonFormat(pattern = Pattern.UUID_PATTERN)
     private String creatorMembershipId;
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER_INT)
     private int position;
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER_INT)
     private int importance;
     private Instant createdAt;
     @JsonInclude

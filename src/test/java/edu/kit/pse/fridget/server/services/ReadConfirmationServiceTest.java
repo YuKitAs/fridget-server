@@ -10,8 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import edu.kit.pse.fridget.server.models.CoolNote;
 import edu.kit.pse.fridget.server.models.Membership;
 import edu.kit.pse.fridget.server.models.ReadConfirmation;
+import edu.kit.pse.fridget.server.repositories.CoolNoteRepository;
 import edu.kit.pse.fridget.server.repositories.MembershipRepository;
 import edu.kit.pse.fridget.server.repositories.ReadConfirmationRepository;
 import edu.kit.pse.fridget.server.utilities.Pattern;
@@ -27,6 +29,8 @@ public class ReadConfirmationServiceTest extends AbstractServiceTest {
     private ReadConfirmationRepository readConfirmationRepository;
     @Mock
     private MembershipRepository membershipRepository;
+    @Mock
+    private CoolNoteRepository coolNoteRepository;
 
     private Membership membership0;
     private Membership membership1;
@@ -41,12 +45,15 @@ public class ReadConfirmationServiceTest extends AbstractServiceTest {
         membershipId0 = membership0.getId();
         membershipId1 = membership1.getId();
 
+        CoolNote coolNote = getFixture("coolNote.json", CoolNote.class);
+
         readConfirmations.add(ReadConfirmation.buildNew(membershipId0, COOL_NOTE_ID));
         readConfirmations.add(ReadConfirmation.buildNew(membershipId1, COOL_NOTE_ID));
 
         when(readConfirmationRepository.findByCoolNoteId(COOL_NOTE_ID)).thenReturn(Optional.of(readConfirmations));
         when(membershipRepository.findById(membershipId0)).thenReturn(Optional.of(membership0));
         when(membershipRepository.findById(membershipId1)).thenReturn(Optional.of(membership1));
+        when(coolNoteRepository.findById(COOL_NOTE_ID)).thenReturn(Optional.of(coolNote));
     }
 
     @Test
