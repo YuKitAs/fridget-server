@@ -93,7 +93,7 @@ public class ReadConfirmationControllerIntegrationTest extends AbstractControlle
                 null, ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo("Read confirmation cannot be deleted.");
+        assertThat(response.getBody().getErrorMessage()).isEqualTo("Read confirmation cannot be deleted, it does not exist.");
     }
 
     @Test
@@ -103,6 +103,6 @@ public class ReadConfirmationControllerIntegrationTest extends AbstractControlle
                 null, ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo("Read confirmation cannot be deleted.");
+        assertThat(response.getBody().getErrorMessage()).isEqualTo("Read confirmation cannot be deleted, it does not exist.");
     }
 }

@@ -65,6 +65,9 @@ public class MembershipServiceImpl implements MembershipService {
 
         userRepository.findById(userId).orElseThrow(EntityUnprocessableException::new);
         flatshareRepository.findById(flatshareId).orElseThrow(EntityUnprocessableException::new);
+        if (membershipRepository.findByFlatshareId(flatshareId).get().size() == 15) {
+            throw new EntityConflictException("Flatshare already full.");
+        }
 
         return saveMembership(membershipBuilder.setRandomId()
                 .setUserId(userId)
@@ -81,7 +84,7 @@ public class MembershipServiceImpl implements MembershipService {
     @Override
     public void deleteMembership(String flatshareId, String userId) {
         membershipRepository.findByFlatshareIdAndUserId(flatshareId, userId)
-                .orElseThrow(() -> new EntityConflictException("Membership cannot be deleted."));
+                .orElseThrow(() -> new EntityConflictException("Membership cannot be deleted, it does not exist."));
 
         membershipRepository.deleteByFlatshareIdAndUserId(flatshareId, userId);
     }

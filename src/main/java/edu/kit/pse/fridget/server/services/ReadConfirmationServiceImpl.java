@@ -55,7 +55,7 @@ public class ReadConfirmationServiceImpl implements ReadConfirmationService {
     @Override
     public void deleteReadConfirmation(String coolNoteId, String membershipId) {
         readConfirmationRepository.findByCoolNoteIdAndMembershipId(coolNoteId, membershipId)
-                .orElseThrow(() -> new EntityConflictException("Read confirmation cannot be deleted."));
+                .orElseThrow(() -> new EntityConflictException("Read confirmation cannot be deleted, it does not exist."));
 
         readConfirmationRepository.deleteByCoolNoteIdAndMembershipId(coolNoteId, membershipId);
     }

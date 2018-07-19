@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
+import edu.kit.pse.fridget.server.exceptions.ExceptionResponseBody;
 import edu.kit.pse.fridget.server.models.AccessCode;
 import edu.kit.pse.fridget.server.utilities.Pattern;
 
@@ -25,5 +26,14 @@ public class AccessCodeControllerIntegrationTest extends AbstractControllerInteg
             assertThat(accessCode.getFlatshareId()).isEqualTo(FLATSHARE_ID);
             assertThat(accessCode.getContent()).matches(Pattern.ACCESS_CODE_PATTERN);
         });
+    }
+
+    @Test
+    public void generateAccessCode_WithIncorrectFlatshareId_ReturnsUnprocessableEntity() {
+        ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().postForEntity("/access-codes",
+                AccessCode.buildNew(null, "incorrect-flatshare-id"), ExceptionResponseBody.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+        assertThat(response.getBody().getErrorMessage()).isEqualTo("Request contains invalid data that cannot be processed.");
     }
 }

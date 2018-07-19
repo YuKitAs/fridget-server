@@ -126,7 +126,7 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
                 ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo("Membership cannot be deleted.");
+        assertThat(response.getBody().getErrorMessage()).isEqualTo("Membership cannot be deleted, it does not exist.");
     }
 
     @Test
@@ -136,6 +136,6 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
                 ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo("Membership cannot be deleted.");
+        assertThat(response.getBody().getErrorMessage()).isEqualTo("Membership cannot be deleted, it does not exist.");
     }
 }

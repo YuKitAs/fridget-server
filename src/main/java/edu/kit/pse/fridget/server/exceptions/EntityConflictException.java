@@ -6,6 +6,6 @@ public class EntityConflictException extends RuntimeException {
     }
 
     public EntityConflictException(String name, String id) {
-        super(String.format("%s id=\"%s\" cannot be deleted.", name, id));
+        super(String.format("%s id=\"%s\" cannot be deleted, it does not exist.", name, id));
     }
 }

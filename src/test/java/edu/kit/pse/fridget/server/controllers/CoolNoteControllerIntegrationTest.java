@@ -85,7 +85,7 @@ public class CoolNoteControllerIntegrationTest extends AbstractControllerIntegra
 
     @Test
     public void saveCoolNote() throws Exception {
-        ResponseEntity<CoolNote> response = getTestRestTemplate().postForEntity("/cool-notes", getFixture("coolNote.json", CoolNote.class),
+        ResponseEntity<CoolNote> response = getTestRestTemplate().postForEntity("/cool-notes", getFixture("coolNote0.json", CoolNote.class),
                 CoolNote.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -133,6 +133,7 @@ public class CoolNoteControllerIntegrationTest extends AbstractControllerIntegra
                 String.format("/cool-notes/%s", "incorrect-cool-note-id"), HttpMethod.DELETE, null, ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo("Cool Note id=\"incorrect-cool-note-id\" cannot be deleted.");
+        assertThat(response.getBody().getErrorMessage()).isEqualTo(
+                "Cool Note id=\"incorrect-cool-note-id\" cannot be deleted, it does not exist.");
     }
 }

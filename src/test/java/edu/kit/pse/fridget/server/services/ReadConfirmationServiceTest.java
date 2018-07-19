@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import edu.kit.pse.fridget.server.exceptions.EntityConflictException;
+import edu.kit.pse.fridget.server.exceptions.EntityNotFoundException;
+import edu.kit.pse.fridget.server.exceptions.EntityUnprocessableException;
 import edu.kit.pse.fridget.server.models.CoolNote;
 import edu.kit.pse.fridget.server.models.Membership;
 import edu.kit.pse.fridget.server.models.ReadConfirmation;
@@ -19,10 +22,12 @@ import edu.kit.pse.fridget.server.repositories.ReadConfirmationRepository;
 import edu.kit.pse.fridget.server.utilities.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class ReadConfirmationServiceTest extends AbstractServiceTest {
+    private static final String INCORRECT_MEMBERSHIP_ID = "incorrect-membership-id";
     @InjectMocks
     private ReadConfirmationServiceImpl service;
     @Mock
@@ -45,7 +50,7 @@ public class ReadConfirmationServiceTest extends AbstractServiceTest {
         membershipId0 = membership0.getId();
         membershipId1 = membership1.getId();
 
-        CoolNote coolNote = getFixture("coolNote.json", CoolNote.class);
+        CoolNote coolNote = getFixture("coolNote0.json", CoolNote.class);
 
         readConfirmations.add(ReadConfirmation.buildNew(membershipId0, COOL_NOTE_ID));
         readConfirmations.add(ReadConfirmation.buildNew(membershipId1, COOL_NOTE_ID));
@@ -54,6 +59,7 @@ public class ReadConfirmationServiceTest extends AbstractServiceTest {
         when(membershipRepository.findById(membershipId0)).thenReturn(Optional.of(membership0));
         when(membershipRepository.findById(membershipId1)).thenReturn(Optional.of(membership1));
         when(coolNoteRepository.findById(COOL_NOTE_ID)).thenReturn(Optional.of(coolNote));
+        when(coolNoteRepository.findById(INCORRECT_COOL_NOTE_ID)).thenReturn(Optional.empty());
     }
 
     @Test
@@ -63,6 +69,11 @@ public class ReadConfirmationServiceTest extends AbstractServiceTest {
         assertThat(memberships.size()).isEqualTo(2);
         assertThat(memberships.get(0)).isEqualTo(membership0);
         assertThat(memberships.get(1)).isEqualTo(membership1);
+    }
+
+    @Test
+    public void getAllMemberships_WithIncorrectCoolNoteId() {
+        assertThatThrownBy(() -> service.getAllMemberships(INCORRECT_COOL_NOTE_ID)).isInstanceOf(EntityNotFoundException.class);
     }
 
     @Test
@@ -76,5 +87,31 @@ public class ReadConfirmationServiceTest extends AbstractServiceTest {
         assertThat(readConfirmationToSave.getId()).matches(Pattern.UUID_PATTERN);
         assertThat(readConfirmationToSave.getMembershipId()).isEqualTo(membershipId1);
         assertThat(readConfirmationToSave.getCoolNoteId()).isEqualTo(COOL_NOTE_ID);
+    }
+
+    @Test
+    public void saveReadConfirmation_WithIncorrectCoolNoteId() {
+        assertThatThrownBy(
+                () -> service.saveReadConfirmation(ReadConfirmation.buildNew(membershipId1, INCORRECT_COOL_NOTE_ID))).isInstanceOf(
+                EntityUnprocessableException.class);
+    }
+
+    @Test
+    public void saveReadConfirmation_WithIncorrectMembershipId() {
+        assertThatThrownBy(
+                () -> service.saveReadConfirmation(ReadConfirmation.buildNew(COOL_NOTE_ID, INCORRECT_MEMBERSHIP_ID))).isInstanceOf(
+                EntityUnprocessableException.class);
+    }
+
+    @Test
+    public void deleteReadConfirmation_WithIncorrectCoolNoteId() {
+        assertThatThrownBy(() -> service.deleteReadConfirmation(INCORRECT_COOL_NOTE_ID, membershipId1)).isInstanceOf(
+                EntityConflictException.class);
+    }
+
+    @Test
+    public void deleteReadConfirmation_WithIncorrectMembershipId() {
+        assertThatThrownBy(() -> service.deleteReadConfirmation(COOL_NOTE_ID, INCORRECT_MEMBERSHIP_ID)).isInstanceOf(
+                EntityConflictException.class);
     }
 }

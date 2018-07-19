@@ -36,6 +36,10 @@ public class FrozenNoteServiceImpl implements FrozenNoteService {
 
     @Override
     public FrozenNote updateFrozenNote(String id, FrozenNote frozenNote) {
+        if (!id.equals(frozenNote.getId())) {
+            throw new EntityUnprocessableException();
+        }
+
         flatshareRepository.findById(frozenNote.getFlatshareId()).orElseThrow(EntityUnprocessableException::new);
 
         if (frozenNoteRepository.findById(id).get().getPosition() != frozenNote.getPosition()) {

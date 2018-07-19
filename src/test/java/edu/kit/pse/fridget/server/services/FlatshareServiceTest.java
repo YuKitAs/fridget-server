@@ -8,6 +8,8 @@ import org.mockito.Mock;
 
 import java.util.Optional;
 
+import edu.kit.pse.fridget.server.exceptions.EntityNotFoundException;
+import edu.kit.pse.fridget.server.exceptions.EntityUnprocessableException;
 import edu.kit.pse.fridget.server.models.Flatshare;
 import edu.kit.pse.fridget.server.models.FrozenNote;
 import edu.kit.pse.fridget.server.models.Membership;
@@ -17,6 +19,7 @@ import edu.kit.pse.fridget.server.repositories.UserRepository;
 import edu.kit.pse.fridget.server.utilities.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -43,8 +46,15 @@ public class FlatshareServiceTest extends AbstractServiceTest {
         createdFlatshare = Flatshare.buildNew(FLATSHARE_NAME);
 
         when(userRepository.findById(USER_ID_0)).thenReturn(Optional.of(User.buildNew("dummy-id", "dummy-name")));
+        when(userRepository.findById(INCORRECT_USER_ID)).thenReturn(Optional.empty());
+        when(flatshareRepository.findById(INCORRECT_FLATSHARE_ID)).thenReturn(Optional.empty());
         when(flatshareRepository.save(createdFlatshare)).thenReturn(createdFlatshare);
         when(magnetColorService.getRandomColor()).thenReturn(MAGNET_COLOR_0);
+    }
+
+    @Test
+    public void getFlatshare_WithIncorrectId() {
+        assertThatThrownBy(() -> flatshareService.getFlatshare(INCORRECT_FLATSHARE_ID)).isInstanceOf(EntityNotFoundException.class);
     }
 
     @Test
@@ -69,5 +79,11 @@ public class FlatshareServiceTest extends AbstractServiceTest {
         assertThat(frozenNoteToSave.getTitle()).isBlank();
         assertThat(frozenNoteToSave.getContent()).isBlank();
         assertThat(frozenNoteToSave.getPosition()).isBetween(0, 2);
+    }
+
+    @Test
+    public void saveFlatshare_WithIncorrectUserId() {
+        assertThatThrownBy(() -> flatshareService.saveFlatshare(createdFlatshare, INCORRECT_USER_ID)).isInstanceOf(
+                EntityUnprocessableException.class);
     }
 }

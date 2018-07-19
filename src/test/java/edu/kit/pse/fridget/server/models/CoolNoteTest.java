@@ -22,7 +22,7 @@ public class CoolNoteTest {
     @Before
     public void setUp() throws IOException {
         coolNoteForCreation = CoolNote.buildForCreation(
-                new ObjectMapper().readValue(new File("src/test/resources/fixtures/coolNote.json"), CoolNote.class));
+                new ObjectMapper().readValue(new File("src/test/resources/fixtures/coolNote0.json"), CoolNote.class));
     }
 
     @Test
