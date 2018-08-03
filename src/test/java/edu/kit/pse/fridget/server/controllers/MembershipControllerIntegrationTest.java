@@ -111,6 +111,18 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
     }
 
     @Test
+    public void saveMembership_WithExistedUserId_ReturnsConflict() throws Exception {
+        getTestRestTemplate().postForEntity("/memberships", getFixture("saveMembershipCommand.json", SaveMembershipCommand.class),
+                Membership.class);
+
+        ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().postForEntity("/memberships",
+                getFixture("saveMembershipCommand.json", SaveMembershipCommand.class), ExceptionResponseBody.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        assertThat(response.getBody().getErrorMessage()).isEqualTo("Membership already exists.");
+    }
+
+    @Test
     public void deleteMembership() {
         ResponseEntity<Void> response = getTestRestTemplate().exchange(
                 String.format("/memberships?flatshare=%s&user=%s", FLATSHARE_ID, USER_ID), HttpMethod.DELETE, null, Void.class);

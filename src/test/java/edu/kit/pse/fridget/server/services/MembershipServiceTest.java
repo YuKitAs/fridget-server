@@ -9,6 +9,8 @@ import org.mockito.Mock;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.IntStream;
 
 import edu.kit.pse.fridget.server.exceptions.EntityConflictException;
 import edu.kit.pse.fridget.server.exceptions.EntityNotFoundException;
@@ -160,6 +162,22 @@ public class MembershipServiceTest extends AbstractServiceTest {
         assertThatThrownBy(
                 () -> membershipService.saveMembership(ACCESS_CODE_CONTENT, INCORRECT_USER_ID, new Membership.Builder())).isInstanceOf(
                 EntityUnprocessableException.class);
+    }
+
+    @Test
+    public void saveMembership_WithFullFlatshare() {
+        List<Membership> memberships = new ArrayList<>();
+        IntStream.range(0, 15)
+                .forEach(i -> memberships.add(new Membership.Builder().setRandomId()
+                        .setUserId(UUID.randomUUID().toString())
+                        .setFlatshareId(FLATSHARE_ID)
+                        .setMagnetColor(magnetColorService.getAvailableRandomColor(FLATSHARE_ID))
+                        .build()));
+
+        when(membershipRepository.findByFlatshareId(FLATSHARE_ID)).thenReturn(Optional.of(memberships));
+
+        assertThatThrownBy(() -> membershipService.saveMembership(ACCESS_CODE_CONTENT, userId1, new Membership.Builder())).isInstanceOf(
+                EntityConflictException.class).hasMessage("Flatshare already full.");
     }
 
     @Test

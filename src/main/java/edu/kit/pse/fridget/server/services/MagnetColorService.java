@@ -5,10 +5,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import edu.kit.pse.fridget.server.exceptions.EntityNotFoundException;
 import edu.kit.pse.fridget.server.models.Membership;
 import edu.kit.pse.fridget.server.repositories.MembershipRepository;
 
@@ -28,17 +28,20 @@ public class MagnetColorService {
     }
 
     String getAvailableRandomColor(String flatshareId) {
-        List<Membership> memberships = membershipRepository.findByFlatshareId(flatshareId)
-                .orElseThrow(() -> new EntityNotFoundException("Membership not found."));
+        Optional<List<Membership>> memberships = membershipRepository.findByFlatshareId(flatshareId);
 
-        List<String> magnetColors = memberships.stream().map(Membership::getMagnetColor).collect(Collectors.toList());
+        if (memberships.isPresent()) {
+            List<String> magnetColors = memberships.get().stream().map(Membership::getMagnetColor).collect(Collectors.toList());
 
-        List<String> availableColors = Arrays.stream(COLORS)
-                .collect(Collectors.toList())
-                .stream()
-                .filter(color -> !magnetColors.contains(color))
-                .collect(Collectors.toList());
+            List<String> availableColors = Arrays.stream(COLORS)
+                    .collect(Collectors.toList())
+                    .stream()
+                    .filter(color -> !magnetColors.contains(color))
+                    .collect(Collectors.toList());
 
-        return availableColors.get(new Random().nextInt(availableColors.size()));
+            return availableColors.get(new Random().nextInt(availableColors.size()));
+        }
+
+        return getRandomColor();
     }
 }
