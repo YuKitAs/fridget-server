@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import edu.kit.pse.fridget.server.exceptions.EntityConflictException;
@@ -65,7 +66,13 @@ public class MembershipServiceImpl implements MembershipService {
 
         userRepository.findById(userId).orElseThrow(EntityUnprocessableException::new);
         flatshareRepository.findById(flatshareId).orElseThrow(EntityUnprocessableException::new);
-        if (membershipRepository.findByFlatshareId(flatshareId).get().size() == 15) {
+
+        if (membershipRepository.findByFlatshareIdAndUserId(flatshareId, userId).isPresent()) {
+            throw new EntityConflictException("Membership already exists.");
+        }
+
+        Optional<List<Membership>> memberships = membershipRepository.findByFlatshareId(flatshareId);
+        if ((memberships.isPresent() && memberships.get().size() == 15)) {
             throw new EntityConflictException("Flatshare already full.");
         }
 
