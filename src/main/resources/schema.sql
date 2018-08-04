@@ -11,6 +11,16 @@ CREATE TABLE IF NOT EXISTS users (
     PRIMARY KEY(id)
 );
 
+CREATE TABLE IF NOT EXISTS devices (
+    id CHAR(36) UNIQUE,
+    user_id CHAR(36) NOT NULL,
+    instance_id_token CHAR(255) NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY(user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS access_codes (
     id CHAR(36) UNIQUE,
     flatshare_id CHAR(36) NOT NULL,

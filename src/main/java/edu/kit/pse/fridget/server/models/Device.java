@@ -1,19 +1,22 @@
 package edu.kit.pse.fridget.server.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import edu.kit.pse.fridget.server.utilities.Pattern;
 
-import java.util.UUID;
-
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.UUID;
 
 @Entity
+@Table(name = "devices")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Device {
     @Id
+    @JsonFormat(pattern = Pattern.UUID_PATTERN)
     private String id;
+    @JsonFormat(pattern = Pattern.UUID_PATTERN)
     private String userId;
     private String instanceIdToken;
 

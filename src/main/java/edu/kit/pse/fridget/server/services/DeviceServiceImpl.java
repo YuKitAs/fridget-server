@@ -1,10 +1,9 @@
 package edu.kit.pse.fridget.server.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import edu.kit.pse.fridget.server.models.Device;
 import edu.kit.pse.fridget.server.repositories.DeviceRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class DeviceServiceImpl implements DeviceService {
@@ -17,6 +16,6 @@ public class DeviceServiceImpl implements DeviceService {
 
     @Override
     public Device saveDevice(Device device) {
-        return repository.save(device);
+        return repository.save(Device.buildNew(device.getUserId(), device.getInstanceIdToken()));
     }
 }
