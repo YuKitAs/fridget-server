@@ -1,6 +1,7 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
 TRUNCATE TABLE users;
+TRUNCATE TABLE devices;
 TRUNCATE TABLE flatshares;
 TRUNCATE TABLE access_codes;
 TRUNCATE TABLE memberships;
