@@ -8,4 +8,6 @@ import edu.kit.pse.fridget.server.models.AccessCode;
 
 public interface AccessCodeRepository extends JpaRepository<AccessCode, String> {
     Optional<AccessCode> findByContent(String content);
+
+    void deleteByContent(String content);
 }

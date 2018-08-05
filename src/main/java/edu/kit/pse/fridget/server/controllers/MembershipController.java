@@ -42,6 +42,7 @@ public class MembershipController {
     }
 
     @PostMapping
+    @Transactional
     public ResponseEntity<Membership> saveMembership(@RequestBody SaveMembershipCommand saveMembershipCommand) {
         return new ResponseEntity<>(service.saveMembership(saveMembershipCommand.getAccessCode(), saveMembershipCommand.getUserId(),
                 saveMembershipCommand.getBuilder()), HttpStatus.CREATED);

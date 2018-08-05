@@ -1,16 +1,15 @@
 package edu.kit.pse.fridget.server.controllers;
 
-import org.junit.Test;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-
 import edu.kit.pse.fridget.server.exceptions.ExceptionResponseBody;
 import edu.kit.pse.fridget.server.models.Membership;
 import edu.kit.pse.fridget.server.models.commands.SaveMembershipCommand;
 import edu.kit.pse.fridget.server.models.representations.UserMembershipRepresentation;
 import edu.kit.pse.fridget.server.utilities.Pattern;
+import org.junit.Test;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -78,9 +77,9 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
     }
 
     @Test
-    public void saveMembership() throws Exception {
+    public void saveMembership_WithAccessCodeDeleted() throws Exception {
         ResponseEntity<Membership> response = getTestRestTemplate().postForEntity("/memberships",
-                getFixture("saveMembershipCommand.json", SaveMembershipCommand.class), Membership.class);
+                getFixture("saveMembershipCommand0.json", SaveMembershipCommand.class), Membership.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getHeaders().getContentType().includes(MediaType.APPLICATION_JSON_UTF8)).isTrue();
@@ -90,6 +89,9 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
             assertThat(representation.getUserId()).isEqualTo("00000000-0000-0000-0000-000000000002");
             assertThat(representation.getMagnetColor()).matches(Pattern.HEX_COLOR_CODE_PATTERN);
         });
+
+        assertThat(getTestRestTemplate().postForEntity("/memberships",
+                getFixture("saveMembershipCommand0.json", SaveMembershipCommand.class), Membership.class).getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
     @Test
@@ -112,11 +114,11 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
 
     @Test
     public void saveMembership_WithExistedUserId_ReturnsConflict() throws Exception {
-        getTestRestTemplate().postForEntity("/memberships", getFixture("saveMembershipCommand.json", SaveMembershipCommand.class),
+        getTestRestTemplate().postForEntity("/memberships", getFixture("saveMembershipCommand0.json", SaveMembershipCommand.class),
                 Membership.class);
 
         ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().postForEntity("/memberships",
-                getFixture("saveMembershipCommand.json", SaveMembershipCommand.class), ExceptionResponseBody.class);
+                getFixture("saveMembershipCommand1.json", SaveMembershipCommand.class), ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
         assertThat(response.getBody().getErrorMessage()).isEqualTo("Membership already exists.");

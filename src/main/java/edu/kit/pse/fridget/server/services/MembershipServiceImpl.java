@@ -1,12 +1,5 @@
 package edu.kit.pse.fridget.server.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import edu.kit.pse.fridget.server.exceptions.EntityConflictException;
 import edu.kit.pse.fridget.server.exceptions.EntityNotFoundException;
 import edu.kit.pse.fridget.server.exceptions.EntityUnprocessableException;
@@ -18,6 +11,12 @@ import edu.kit.pse.fridget.server.repositories.AccessCodeRepository;
 import edu.kit.pse.fridget.server.repositories.FlatshareRepository;
 import edu.kit.pse.fridget.server.repositories.MembershipRepository;
 import edu.kit.pse.fridget.server.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class MembershipServiceImpl implements MembershipService {
@@ -29,7 +28,7 @@ public class MembershipServiceImpl implements MembershipService {
 
     @Autowired
     public MembershipServiceImpl(MembershipRepository membershipRepository, UserRepository userRepository,
-            AccessCodeRepository accessCodeRepository, FlatshareRepository flatshareRepository, MagnetColorService magnetColorService) {
+                                 AccessCodeRepository accessCodeRepository, FlatshareRepository flatshareRepository, MagnetColorService magnetColorService) {
         this.membershipRepository = membershipRepository;
         this.userRepository = userRepository;
         this.accessCodeRepository = accessCodeRepository;
@@ -66,6 +65,8 @@ public class MembershipServiceImpl implements MembershipService {
 
         userRepository.findById(userId).orElseThrow(EntityUnprocessableException::new);
         flatshareRepository.findById(flatshareId).orElseThrow(EntityUnprocessableException::new);
+
+        accessCodeRepository.deleteByContent(accessCodeContent);
 
         if (membershipRepository.findByFlatshareIdAndUserId(flatshareId, userId).isPresent()) {
             throw new EntityConflictException("Membership already exists.");
