@@ -38,6 +38,7 @@ dependencies {
     compile("com.google.apis:google-api-services-oauth2:v1-rev142-1.23.0")
     compile("mysql:mysql-connector-java:5.1.13")
     compile("com.auth0:java-jwt:3.4.0")
+    implementation("com.google.firebase:firebase-admin:6.3.0")
     testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
     testCompile("org.assertj:assertj-core:3.10.0")
 }
