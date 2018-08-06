@@ -8,11 +8,14 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 
+import org.springframework.stereotype.Service;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Objects;
 
+@Service
 public class FirebaseServiceImpl implements FirebaseService {
     private static final String DATABASE_URL = "https://fridget-e7bd4.firebaseio.com";
 
@@ -28,10 +31,7 @@ public class FirebaseServiceImpl implements FirebaseService {
         try {
             GoogleCredentials credentials = GoogleCredentials.fromStream(Objects.requireNonNull(serviceAccount));
 
-            options = new FirebaseOptions.Builder()
-                    .setCredentials(credentials)
-                    .setDatabaseUrl(DATABASE_URL)
-                    .build();
+            options = new FirebaseOptions.Builder().setCredentials(credentials).setDatabaseUrl(DATABASE_URL).build();
 
             if (FirebaseApp.getApps().isEmpty()) {
                 FirebaseApp.initializeApp(options);
@@ -44,11 +44,7 @@ public class FirebaseServiceImpl implements FirebaseService {
     public void sendMessage(String token, Notification notification, String coolNoteId) {
         try {
             FirebaseMessaging.getInstance()
-                    .send(Message.builder()
-                            .setNotification(notification)
-                            .putData("coolNoteId", coolNoteId)
-                            .setToken(token)
-                            .build());
+                    .send(Message.builder().setNotification(notification).putData("coolNoteId", coolNoteId).setToken(token).build());
         } catch (FirebaseMessagingException e) {
             e.printStackTrace();
         }
