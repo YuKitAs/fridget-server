@@ -15,7 +15,7 @@ The server-side of [Fridget](https://github.com/YuKitAs/fridget-android) built w
 
 ### Development
 
-* Configure database according to spring configurations specified in `src/main/resources/application.yml`.
+* Configure database according to spring configurations specified in `src/main/resources/application-development.yml`.
 * Run the following Bash script to execute Gradle `bootRun` task with Spring profile `development`:
   ```console
   $ ./boot-run.sh
