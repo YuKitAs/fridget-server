@@ -1,6 +1,15 @@
 package edu.kit.pse.fridget.server.services;
 
 import com.google.firebase.messaging.Notification;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import edu.kit.pse.fridget.server.exceptions.EntityConflictException;
 import edu.kit.pse.fridget.server.exceptions.EntityNotFoundException;
 import edu.kit.pse.fridget.server.exceptions.EntityUnprocessableException;
@@ -11,13 +20,6 @@ import edu.kit.pse.fridget.server.repositories.CoolNoteRepository;
 import edu.kit.pse.fridget.server.repositories.DeviceRepository;
 import edu.kit.pse.fridget.server.repositories.MembershipRepository;
 import edu.kit.pse.fridget.server.repositories.TaggedMemberRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class CoolNoteServiceImpl implements CoolNoteService {
@@ -29,7 +31,7 @@ public class CoolNoteServiceImpl implements CoolNoteService {
 
     @Autowired
     public CoolNoteServiceImpl(CoolNoteRepository coolNoteRepository, MembershipRepository membershipRepository,
-                               DeviceRepository deviceRepository, TaggedMemberRepository taggedMemberRepository, FirebaseService firebaseService) {
+            DeviceRepository deviceRepository, TaggedMemberRepository taggedMemberRepository, FirebaseService firebaseService) {
         this.coolNoteRepository = coolNoteRepository;
         this.membershipRepository = membershipRepository;
         this.deviceRepository = deviceRepository;
@@ -43,11 +45,11 @@ public class CoolNoteServiceImpl implements CoolNoteService {
                 .orElseThrow(() -> new EntityNotFoundException("Cool Notes not found."));
 
         return coolNotes.stream().map(coolNote -> {
-            List<TaggedMember> taggedMembers = taggedMemberRepository.findByCoolNoteId(coolNote.getId())
-                    .orElseThrow(() -> new EntityNotFoundException("Tagged members not found."));
+            Optional<List<TaggedMember>> taggedMembers = taggedMemberRepository.findByCoolNoteId(coolNote.getId());
 
-            return taggedMembers.isEmpty() ? CoolNote.buildForFetching(coolNote, new ArrayList<>()) : CoolNote.buildForFetching(coolNote,
-                    taggedMembers.stream().map(TaggedMember::getId).collect(Collectors.toList()));
+            return (!taggedMembers.isPresent() || taggedMembers.get().isEmpty()) ? CoolNote.buildForFetching(coolNote,
+                    new ArrayList<>()) : CoolNote.buildForFetching(coolNote,
+                    taggedMembers.get().stream().map(TaggedMember::getId).collect(Collectors.toList()));
         }).collect(Collectors.toList());
     }
 
