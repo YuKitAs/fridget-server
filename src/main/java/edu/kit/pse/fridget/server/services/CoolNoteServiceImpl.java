@@ -57,11 +57,11 @@ public class CoolNoteServiceImpl implements CoolNoteService {
     public CoolNote getCoolNote(String id) {
         CoolNote coolNote = coolNoteRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Cool Note", id));
 
-        List<TaggedMember> taggedMembers = taggedMemberRepository.findByCoolNoteId(id)
-                .orElseThrow(() -> new EntityNotFoundException("Tagged members not found."));
+        Optional<List<TaggedMember>> taggedMembers = taggedMemberRepository.findByCoolNoteId(id);
 
-        return taggedMembers.isEmpty() ? CoolNote.buildForFetching(coolNote, new ArrayList<>()) : CoolNote.buildForFetching(coolNote,
-                taggedMembers.stream().map(TaggedMember::getId).collect(Collectors.toList()));
+        return (!taggedMembers.isPresent() || taggedMembers.get().isEmpty()) ? CoolNote.buildForFetching(coolNote,
+                new ArrayList<>()) : CoolNote.buildForFetching(coolNote,
+                taggedMembers.get().stream().map(TaggedMember::getId).collect(Collectors.toList()));
     }
 
     @Override
