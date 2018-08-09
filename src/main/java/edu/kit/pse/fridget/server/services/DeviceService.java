@@ -4,4 +4,6 @@ import edu.kit.pse.fridget.server.models.Device;
 
 public interface DeviceService {
     Device saveDevice(Device device);
+
+    Device updateDevice(String id, Device device);
 }

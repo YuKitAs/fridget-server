@@ -46,8 +46,7 @@ public class FrozenNoteServiceImpl implements FrozenNoteService {
             throw new EntityConflictException(String.format("Position %s invalid.", frozenNote.getPosition()));
         }
 
-        return frozenNoteRepository.save(
-                new FrozenNote(id, frozenNote.getFlatshareId(), frozenNote.getTitle(), frozenNote.getContent(), frozenNote.getPosition()));
+        return frozenNoteRepository.save(frozenNote);
     }
 
     @Override
