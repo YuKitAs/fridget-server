@@ -14,8 +14,7 @@ import edu.kit.pse.fridget.server.repositories.MembershipRepository;
 
 @Service
 public class MagnetColorService {
-    private static final String[] COLORS = {"6ddbff", "0054ff", "66666b", "cc0cf9", "cc0099", "7b1100", "ff0000", "ff9900", "f9f22a",
-            "0eac0e", "006600", "009999", "ffcccc", "ffffff", "bdbdbd"};
+    private static final String[] COLORS = {"6ddbff", "0054ff", "66666b", "cc0cf9", "cc0099", "7b1100", "ff0000", "ff9900", "f9f22a", "0eac0e", "006600", "009999", "ffcccc", "75ffca", "bdbdbd"};
     private final MembershipRepository membershipRepository;
 
     @Autowired
