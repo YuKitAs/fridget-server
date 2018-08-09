@@ -32,7 +32,7 @@ public class DeviceControllerIntegrationTest extends AbstractControllerIntegrati
     }
 
     @Test
-    public void saveDevicd_WithIncorrectUserId() throws Exception {
+    public void saveDevice_WithIncorrectUserId() throws Exception {
         ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().postForEntity("/devices",
                 getFixture("deviceWithIncorrectUserId0.json", Device.class), ExceptionResponseBody.class);
 
@@ -57,7 +57,7 @@ public class DeviceControllerIntegrationTest extends AbstractControllerIntegrati
     }
 
     @Test
-    public void updateDevicd_WithIncorrectUserId_ReturnsUnprocessableEntity() throws Exception {
+    public void updateDevice_WithIncorrectUserId_ReturnsUnprocessableEntity() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
         ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().exchange(String.format("/devices/%s", DEVICE_ID),
