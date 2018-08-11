@@ -1,8 +1,7 @@
 package edu.kit.pse.fridget.server.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.kit.pse.fridget.server.configurations.AuthenticationServiceConfiguration;
-import edu.kit.pse.fridget.server.configurations.FirebaseServiceConfiguration;
+
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,6 +14,9 @@ import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.File;
+
+import edu.kit.pse.fridget.server.configurations.AuthenticationServiceConfiguration;
+import edu.kit.pse.fridget.server.configurations.FirebaseServiceConfiguration;
 
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
@@ -30,6 +32,9 @@ public abstract class AbstractControllerIntegrationTest {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    static final String FLATSHARE_ID = "00000000-0000-0000-0000-000000000000";
+    static final String ENTITY_UNPROCESSABLE_ERROR_MESSAGE = "Request contains invalid data that cannot be processed.";
 
     TestRestTemplate getTestRestTemplate() {
         return testRestTemplate;

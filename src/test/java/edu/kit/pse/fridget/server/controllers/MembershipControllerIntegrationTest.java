@@ -1,23 +1,24 @@
 package edu.kit.pse.fridget.server.controllers;
 
-import edu.kit.pse.fridget.server.exceptions.ExceptionResponseBody;
-import edu.kit.pse.fridget.server.models.Membership;
-import edu.kit.pse.fridget.server.models.commands.SaveMembershipCommand;
-import edu.kit.pse.fridget.server.models.representations.UserMembershipRepresentation;
-import edu.kit.pse.fridget.server.utilities.Pattern;
 import org.junit.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
+import edu.kit.pse.fridget.server.exceptions.ExceptionResponseBody;
+import edu.kit.pse.fridget.server.models.Membership;
+import edu.kit.pse.fridget.server.models.commands.SaveMembershipCommand;
+import edu.kit.pse.fridget.server.models.representations.UserMembershipRepresentation;
+import edu.kit.pse.fridget.server.utilities.Pattern;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MembershipControllerIntegrationTest extends AbstractControllerIntegrationTest {
-    private static final String FLATSHARE_ID = "00000000-0000-0000-0000-000000000000";
     private static final String USER_ID = "00000000-0000-0000-0000-000000000000";
     private static final String MAGNET_COLOR = "0099cc";
     private static final String GOOGLE_NAME = "John Doe";
+    private static final String MEMBERSHIP_CONFLICT_ERROR_MESSAGE = "Membership cannot be deleted, it does not exist.";
 
     @Test
     public void getAllMembers() {
@@ -90,8 +91,9 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
             assertThat(representation.getMagnetColor()).matches(Pattern.HEX_COLOR_CODE_PATTERN);
         });
 
-        assertThat(getTestRestTemplate().postForEntity("/memberships",
-                getFixture("saveMembershipCommand0.json", SaveMembershipCommand.class), Membership.class).getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(
+                getTestRestTemplate().postForEntity("/memberships", getFixture("saveMembershipCommand0.json", SaveMembershipCommand.class),
+                        Membership.class).getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
     @Test
@@ -109,7 +111,7 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
                 new SaveMembershipCommand("abc42", "incorrect-user-id"), ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo("Request contains invalid data that cannot be processed.");
+        assertThat(response.getBody().getErrorMessage()).isEqualTo(ENTITY_UNPROCESSABLE_ERROR_MESSAGE);
     }
 
     @Test
@@ -140,7 +142,7 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
                 ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo("Membership cannot be deleted, it does not exist.");
+        assertThat(response.getBody().getErrorMessage()).isEqualTo(MEMBERSHIP_CONFLICT_ERROR_MESSAGE);
     }
 
     @Test
@@ -150,6 +152,6 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
                 ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo("Membership cannot be deleted, it does not exist.");
+        assertThat(response.getBody().getErrorMessage()).isEqualTo(MEMBERSHIP_CONFLICT_ERROR_MESSAGE);
     }
 }

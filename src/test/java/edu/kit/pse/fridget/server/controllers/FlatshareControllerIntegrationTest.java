@@ -13,7 +13,6 @@ import edu.kit.pse.fridget.server.utilities.Pattern;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class FlatshareControllerIntegrationTest extends AbstractControllerIntegrationTest {
-    private static final String FLATSHARE_ID = "00000000-0000-0000-0000-000000000000";
     private static final String FLATSHARE_NAME = "An Awesome Flatshare";
 
     @Test
@@ -57,6 +56,6 @@ public class FlatshareControllerIntegrationTest extends AbstractControllerIntegr
                 new SaveFlatshareCommand("incorrect-user-id", FLATSHARE_NAME), ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo("Request contains invalid data that cannot be processed.");
+        assertThat(response.getBody().getErrorMessage()).isEqualTo(ENTITY_UNPROCESSABLE_ERROR_MESSAGE);
     }
 }

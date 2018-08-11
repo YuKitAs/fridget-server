@@ -1,5 +1,17 @@
 package edu.kit.pse.fridget.server.services;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.IntStream;
+
 import edu.kit.pse.fridget.server.exceptions.EntityConflictException;
 import edu.kit.pse.fridget.server.exceptions.EntityNotFoundException;
 import edu.kit.pse.fridget.server.exceptions.EntityUnprocessableException;
@@ -13,21 +25,12 @@ import edu.kit.pse.fridget.server.repositories.FlatshareRepository;
 import edu.kit.pse.fridget.server.repositories.MembershipRepository;
 import edu.kit.pse.fridget.server.repositories.UserRepository;
 import edu.kit.pse.fridget.server.utilities.Pattern;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class MembershipServiceTest extends AbstractServiceTest {
     private static final String GOOGLE_USER_ID_0 = "valid-google-id-0";
@@ -186,7 +189,7 @@ public class MembershipServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void deleteMembership_WithIncorrectUserId_ReturnsConflict() {
+    public void deleteMembership_WithIncorrectUserId() {
         assertThatThrownBy(() -> membershipService.deleteMembership(FLATSHARE_ID, INCORRECT_USER_ID)).isInstanceOf(
                 EntityConflictException.class);
     }

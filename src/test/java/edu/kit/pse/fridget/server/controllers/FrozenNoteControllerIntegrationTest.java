@@ -14,7 +14,6 @@ import edu.kit.pse.fridget.server.models.FrozenNote;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class FrozenNoteControllerIntegrationTest extends AbstractControllerIntegrationTest {
-    private static final String FLATSHARE_ID = "00000000-0000-0000-0000-000000000000";
     private static final String FROZEN_NOTE_ID_0 = "00000000-0000-0000-0000-000000000000";
     private static final String FROZEN_NOTE_ID_1 = "00000000-0000-0000-0000-000000000001";
     private static final String FROZEN_NOTE_ID_2 = "00000000-0000-0000-0000-000000000002";
@@ -92,7 +91,7 @@ public class FrozenNoteControllerIntegrationTest extends AbstractControllerInteg
                 ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo("Request contains invalid data that cannot be processed.");
+        assertThat(response.getBody().getErrorMessage()).isEqualTo(ENTITY_UNPROCESSABLE_ERROR_MESSAGE);
     }
 
     @Test

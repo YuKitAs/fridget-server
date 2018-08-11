@@ -12,8 +12,6 @@ import edu.kit.pse.fridget.server.utilities.Pattern;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AccessCodeControllerIntegrationTest extends AbstractControllerIntegrationTest {
-    private static final String FLATSHARE_ID = "00000000-0000-0000-0000-000000000000";
-
     @Test
     public void generateAccessCode() throws Exception {
         ResponseEntity<AccessCode> response = getTestRestTemplate().postForEntity("/access-codes",
@@ -34,6 +32,6 @@ public class AccessCodeControllerIntegrationTest extends AbstractControllerInteg
                 AccessCode.buildNew(null, "incorrect-flatshare-id"), ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo("Request contains invalid data that cannot be processed.");
+        assertThat(response.getBody().getErrorMessage()).isEqualTo(ENTITY_UNPROCESSABLE_ERROR_MESSAGE);
     }
 }
