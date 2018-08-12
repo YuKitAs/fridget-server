@@ -1,5 +1,12 @@
 package edu.kit.pse.fridget.server.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import edu.kit.pse.fridget.server.exceptions.EntityConflictException;
 import edu.kit.pse.fridget.server.exceptions.EntityNotFoundException;
 import edu.kit.pse.fridget.server.exceptions.EntityUnprocessableException;
@@ -11,12 +18,6 @@ import edu.kit.pse.fridget.server.repositories.AccessCodeRepository;
 import edu.kit.pse.fridget.server.repositories.FlatshareRepository;
 import edu.kit.pse.fridget.server.repositories.MembershipRepository;
 import edu.kit.pse.fridget.server.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class MembershipServiceImpl implements MembershipService {
@@ -28,7 +29,7 @@ public class MembershipServiceImpl implements MembershipService {
 
     @Autowired
     public MembershipServiceImpl(MembershipRepository membershipRepository, UserRepository userRepository,
-                                 AccessCodeRepository accessCodeRepository, FlatshareRepository flatshareRepository, MagnetColorService magnetColorService) {
+            AccessCodeRepository accessCodeRepository, FlatshareRepository flatshareRepository, MagnetColorService magnetColorService) {
         this.membershipRepository = membershipRepository;
         this.userRepository = userRepository;
         this.accessCodeRepository = accessCodeRepository;
@@ -91,9 +92,12 @@ public class MembershipServiceImpl implements MembershipService {
 
     @Override
     public void deleteMembership(String flatshareId, String userId) {
-        membershipRepository.findByFlatshareIdAndUserId(flatshareId, userId)
-                .orElseThrow(() -> new EntityConflictException("Membership cannot be deleted, it does not exist."));
+        Optional<Membership> membership = membershipRepository.findByFlatshareIdAndUserId(flatshareId, userId);
 
-        membershipRepository.deleteByFlatshareIdAndUserId(flatshareId, userId);
+        if (!membership.isPresent()) {
+            throw new EntityConflictException("Membership cannot be deleted, it does not exist.");
+        }
+
+        membershipRepository.delete(membership.get());
     }
 }
