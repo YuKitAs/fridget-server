@@ -99,5 +99,9 @@ public class MembershipServiceImpl implements MembershipService {
         }
 
         membershipRepository.delete(membership.get());
+
+        if (membershipRepository.findAll().isEmpty()) {
+            flatshareRepository.deleteById(flatshareId);
+        }
     }
 }
