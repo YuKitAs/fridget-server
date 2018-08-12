@@ -79,14 +79,14 @@ public class CoolNoteServiceImpl implements CoolNoteService {
 
         CoolNote newCoolNote = coolNoteRepository.save(coolNote);
 
-        /*        String coolNoteId = newCoolNote.getId();
+        String coolNoteId = newCoolNote.getId();
 
         Optional<List<TaggedMember>> taggedMembers = taggedMemberRepository.findByCoolNoteId(coolNoteId);
         if (taggedMembers.isPresent() && !taggedMembers.get().isEmpty()) {
             sendMessagesToTaggedMembers(taggedMembers.get(), coolNoteId);
         } else {
             sendMessagesToAll(creatorMembership, coolNoteId);
-        }*/
+        }
 
         return newCoolNote;
     }
@@ -116,6 +116,10 @@ public class CoolNoteServiceImpl implements CoolNoteService {
     }
 
     private void sendMessages(List<String> tokens, String coolNoteId) {
+        if (tokens.isEmpty()) {
+            return;
+        }
+
         firebaseService.initializeApp();
 
         tokens.forEach(token -> firebaseService.sendMessage(token, new Notification("Fridget", "A new Cool Note is created!"), coolNoteId));
