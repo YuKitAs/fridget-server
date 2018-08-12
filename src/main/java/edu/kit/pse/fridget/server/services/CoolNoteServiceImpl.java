@@ -5,7 +5,7 @@ import com.google.firebase.messaging.Notification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -48,7 +48,7 @@ public class CoolNoteServiceImpl implements CoolNoteService {
             Optional<List<TaggedMember>> taggedMembers = taggedMemberRepository.findByCoolNoteId(coolNote.getId());
 
             return (!taggedMembers.isPresent() || taggedMembers.get().isEmpty()) ? CoolNote.buildForFetching(coolNote,
-                    new ArrayList<>()) : CoolNote.buildForFetching(coolNote,
+                    Collections.emptyList()) : CoolNote.buildForFetching(coolNote,
                     taggedMembers.get().stream().map(TaggedMember::getId).collect(Collectors.toList()));
         }).collect(Collectors.toList());
     }
@@ -60,7 +60,7 @@ public class CoolNoteServiceImpl implements CoolNoteService {
         Optional<List<TaggedMember>> taggedMembers = taggedMemberRepository.findByCoolNoteId(id);
 
         return (!taggedMembers.isPresent() || taggedMembers.get().isEmpty()) ? CoolNote.buildForFetching(coolNote,
-                new ArrayList<>()) : CoolNote.buildForFetching(coolNote,
+                Collections.emptyList()) : CoolNote.buildForFetching(coolNote,
                 taggedMembers.get().stream().map(TaggedMember::getId).collect(Collectors.toList()));
     }
 

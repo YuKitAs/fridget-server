@@ -3,7 +3,7 @@ package edu.kit.pse.fridget.server.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -36,7 +36,7 @@ public class ReadConfirmationServiceImpl implements ReadConfirmationService {
         List<ReadConfirmation> readConfirmations = readConfirmationRepository.findByCoolNoteId(coolNoteId)
                 .orElseThrow(() -> new EntityNotFoundException("Read confirmations not found."));
 
-        return readConfirmations.isEmpty() ? new ArrayList<>() : readConfirmations.stream()
+        return readConfirmations.isEmpty() ? Collections.emptyList() : readConfirmations.stream()
                 .map(readConfirmation -> membershipRepository.findById(readConfirmation.getMembershipId())
                         .orElseThrow(() -> new EntityNotFoundException("Membership not found.")))
                 .collect(Collectors.toList());

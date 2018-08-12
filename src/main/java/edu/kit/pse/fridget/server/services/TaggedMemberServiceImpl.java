@@ -3,7 +3,7 @@ package edu.kit.pse.fridget.server.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,7 +29,7 @@ public class TaggedMemberServiceImpl implements TaggedMemberService {
         List<TaggedMember> taggedMembers = taggedMemberRepository.findByCoolNoteId(coolNoteId)
                 .orElseThrow(() -> new EntityNotFoundException("Tagged members not found."));
 
-        return taggedMembers.isEmpty() ? new ArrayList<>() : taggedMembers.stream()
+        return taggedMembers.isEmpty() ? Collections.emptyList() : taggedMembers.stream()
                 .map(TaggedMember::getMembershipId)
                 .map(id -> membershipRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Membership not found.")))
                 .collect(Collectors.toList());
