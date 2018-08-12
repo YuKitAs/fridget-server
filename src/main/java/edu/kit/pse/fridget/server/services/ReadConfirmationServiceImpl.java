@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import edu.kit.pse.fridget.server.exceptions.EntityConflictException;
@@ -49,11 +50,10 @@ public class ReadConfirmationServiceImpl implements ReadConfirmationService {
         membershipRepository.findById(membershipId).orElseThrow(EntityUnprocessableException::new);
         coolNoteRepository.findById(coolNoteId).orElseThrow(EntityUnprocessableException::new);
 
-        if (readConfirmationRepository.findByCoolNoteIdAndMembershipId(coolNoteId, membershipId).isPresent()) {
-            throw new EntityConflictException("Read confirmation already exists.");
-        }
+        Optional<ReadConfirmation> newReadConfirmation = readConfirmationRepository.findByCoolNoteIdAndMembershipId(coolNoteId,
+                membershipId);
 
-        return readConfirmationRepository.save(ReadConfirmation.buildNew(membershipId, coolNoteId));
+        return newReadConfirmation.orElseGet(() -> readConfirmationRepository.save(ReadConfirmation.buildNew(membershipId, coolNoteId)));
     }
 
     @Override

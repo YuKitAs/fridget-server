@@ -104,16 +104,6 @@ public class ReadConfirmationServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void saveReadConfirmation_WithExistedCoolNoteIdAndMembershipId() {
-        ReadConfirmation readConfirmation = ReadConfirmation.buildNew(membershipId0, COOL_NOTE_ID);
-
-        when(readConfirmationRepository.findByCoolNoteIdAndMembershipId(COOL_NOTE_ID, membershipId0)).thenReturn(
-                Optional.of(readConfirmation));
-
-        assertThatThrownBy(() -> service.saveReadConfirmation(readConfirmation)).isInstanceOf(EntityConflictException.class);
-    }
-
-    @Test
     public void deleteReadConfirmation_WithIncorrectCoolNoteId() {
         assertThatThrownBy(() -> service.deleteReadConfirmation(INCORRECT_COOL_NOTE_ID, membershipId1)).isInstanceOf(
                 EntityConflictException.class);
