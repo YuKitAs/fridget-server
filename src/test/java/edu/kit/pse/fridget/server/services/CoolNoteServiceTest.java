@@ -36,7 +36,7 @@ public class CoolNoteServiceTest extends AbstractServiceTest {
         List<CoolNote> coolNotes = new ArrayList<>();
         coolNotes.add(getFixture("coolNote1.json", CoolNote.class));
 
-        when(coolNoteRepository.findAll()).thenReturn(coolNotes);
+        when(coolNoteRepository.findByFlatshareId(FLATSHARE_ID)).thenReturn(Optional.of(coolNotes));
         when(coolNoteRepository.findByFlatshareId(INCORRECT_FLATSHARE_ID)).thenReturn(Optional.empty());
         when(coolNoteRepository.findById(INCORRECT_COOL_NOTE_ID)).thenReturn(Optional.empty());
         when(membershipRepository.findById("00000000-0000-0000-0000-000000000000")).thenReturn(

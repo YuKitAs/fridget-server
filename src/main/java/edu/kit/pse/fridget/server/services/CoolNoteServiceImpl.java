@@ -69,7 +69,8 @@ public class CoolNoteServiceImpl implements CoolNoteService {
         Membership creatorMembership = membershipRepository.findById(coolNote.getCreatorMembershipId())
                 .orElseThrow(EntityUnprocessableException::new);
 
-        if (coolNoteRepository.findAll()
+        Optional<List<CoolNote>> coolNotes = coolNoteRepository.findByFlatshareId(creatorMembership.getFlatshareId());
+        if (coolNotes.isPresent() && coolNotes.get()
                 .stream()
                 .map(CoolNote::getPosition)
                 .collect(Collectors.toList())
