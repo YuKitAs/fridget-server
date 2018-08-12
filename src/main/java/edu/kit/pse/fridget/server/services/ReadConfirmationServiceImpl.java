@@ -49,6 +49,10 @@ public class ReadConfirmationServiceImpl implements ReadConfirmationService {
         membershipRepository.findById(membershipId).orElseThrow(EntityUnprocessableException::new);
         coolNoteRepository.findById(coolNoteId).orElseThrow(EntityUnprocessableException::new);
 
+        if (readConfirmationRepository.findByCoolNoteIdAndMembershipId(coolNoteId, membershipId).isPresent()) {
+            throw new EntityConflictException("Read confirmation already exists.");
+        }
+
         return readConfirmationRepository.save(ReadConfirmation.buildNew(membershipId, coolNoteId));
     }
 

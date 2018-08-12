@@ -78,6 +78,18 @@ public class ReadConfirmationControllerIntegrationTest extends AbstractControlle
     }
 
     @Test
+    public void saveReadConfirmation_WithExistedCoolNoteIdAndMembershipId_ReturnsConflict() throws Exception {
+        getTestRestTemplate().postForEntity("/read-confirmations", getFixture("readConfirmation.json", ReadConfirmation.class),
+                ReadConfirmation.class);
+
+        ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().postForEntity("/read-confirmations",
+                getFixture("readConfirmation.json", ReadConfirmation.class), ExceptionResponseBody.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        assertThat(response.getBody().getErrorMessage()).isEqualTo("Read confirmation already exists.");
+    }
+
+    @Test
     public void deleteReadConfirmation() {
         ResponseEntity<Void> response = getTestRestTemplate().exchange(
                 String.format("/read-confirmations?cool-note=%s&membership=%s", COOL_NOTE_ID, MEMBERSHIP_ID), HttpMethod.DELETE, null,
