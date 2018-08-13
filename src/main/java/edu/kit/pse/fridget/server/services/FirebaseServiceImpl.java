@@ -10,8 +10,6 @@ import com.google.firebase.messaging.Notification;
 
 import org.springframework.stereotype.Service;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -20,16 +18,10 @@ public class FirebaseServiceImpl implements FirebaseService {
     private static final String DATABASE_URL = "https://fridget-e7bd4.firebaseio.com";
 
     public void initializeApp() {
-        FileInputStream serviceAccount = null;
-        try {
-            serviceAccount = new FileInputStream(FirebaseServiceImpl.class.getResource("/serviceAccountKey.json").getFile());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
         FirebaseOptions options;
         try {
-            GoogleCredentials credentials = GoogleCredentials.fromStream(Objects.requireNonNull(serviceAccount));
+            GoogleCredentials credentials = GoogleCredentials.fromStream(
+                    Objects.requireNonNull(FirebaseServiceImpl.class.getResourceAsStream("/serviceAccountKey.json")));
 
             options = new FirebaseOptions.Builder().setCredentials(credentials).setDatabaseUrl(DATABASE_URL).build();
 

@@ -2,9 +2,12 @@ package edu.kit.pse.fridget.server.services;
 
 import com.google.firebase.messaging.Notification;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +26,8 @@ import edu.kit.pse.fridget.server.repositories.TaggedMemberRepository;
 
 @Service
 public class CoolNoteServiceImpl implements CoolNoteService {
+    private static final Log LOG = LogFactory.getLog(CoolNoteServiceImpl.class);
+
     private final CoolNoteRepository coolNoteRepository;
     private final MembershipRepository membershipRepository;
     private final DeviceRepository deviceRepository;
@@ -100,10 +105,13 @@ public class CoolNoteServiceImpl implements CoolNoteService {
     }
 
     private void sendMessagesToAll(Membership creatorMembership, String coolNoteId) {
+        LOG.info("Sending push notification to all roommates of (user ID) " + creatorMembership.getUserId());
+
         sendMessages(membershipRepository.findByFlatshareId(creatorMembership.getFlatshareId())
                 .get()
                 .stream()
                 .filter(membership -> !membership.getUserId().equals(creatorMembership.getUserId()))
+                .peek(membership -> LOG.info("Push notification will be sent to (user ID)" + membership.getUserId()))
                 .map(Membership::getUserId)
                 .map(userId -> deviceRepository.findByUserId(userId).get().getInstanceIdToken())
                 .collect(Collectors.toList()), coolNoteId);
@@ -121,8 +129,13 @@ public class CoolNoteServiceImpl implements CoolNoteService {
             return;
         }
 
-        firebaseService.initializeApp();
+        this.firebaseService.initializeApp();
 
-        tokens.forEach(token -> firebaseService.sendMessage(token, new Notification("Fridget", "A new Cool Note is created!"), coolNoteId));
+        tokens.forEach(token -> sendMessageToOne(token, coolNoteId));
+    }
+
+    private void sendMessageToOne(String token, String coolNoteId) {
+        LOG.info("Sending push notification with token " + token);
+        firebaseService.sendMessage(token, new Notification("Fridget", "A new Cool Note is created!"), coolNoteId);
     }
 }
