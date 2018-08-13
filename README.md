@@ -43,7 +43,7 @@ The server-side of [Fridget](https://github.com/YuKitAs/fridget-android) built w
 ### Prerequisite
 
 * [Docker](https://docs.docker.com/install/) (>=18.04) and [Docker Compose](https://docs.docker.com/compose/install/#prerequisites) are installed
-* MySQL image `mysql:5.7.23` is running (see [note](https://github.com/YuKitAs/tech-note/blob/master/container/dockerize-spring-boot-app-with-mysql.md))
+* A MySQL image named `mysql:5.7.23` is running (see [note](https://github.com/YuKitAs/tech-note/blob/master/container/dockerize-spring-boot-app-with-mysql.md))
 * JDK 1.8 is installed
 * Port `8080` is not in use
 
@@ -51,14 +51,14 @@ The server-side of [Fridget](https://github.com/YuKitAs/fridget-android) built w
 
 * Build project image:
 
-```console
-# docker build --no-cache -t fridget-server-docker .
-```
+  ```console
+  # docker build --no-cache -t fridget-server-docker .
+  ```
 * Run docker-compose:
 
-```console
-# docker-compose up
-```
+  ```console
+  # docker-compose up
+  ```
 
 ## TODO
 
