@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import edu.kit.pse.fridget.server.exceptions.ExceptionResponseBody;
+import edu.kit.pse.fridget.server.models.Flatshare;
 import edu.kit.pse.fridget.server.models.Membership;
 import edu.kit.pse.fridget.server.models.commands.SaveMembershipCommand;
 import edu.kit.pse.fridget.server.models.representations.UserMembershipRepresentation;
@@ -133,6 +134,24 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
         assertThat(response.getBody()).isNull();
+        assertThat(getTestRestTemplate().getForEntity(String.format("/memberships?flatshare=%s&user=%s", FLATSHARE_ID, USER_ID),
+                UserMembershipRepresentation.class).getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    public void deleteMembership_WithEmptyFlatshareDeleted() {
+        getTestRestTemplate().exchange(String.format("/memberships?flatshare=%s&user=%s", FLATSHARE_ID, USER_ID), HttpMethod.DELETE, null,
+                Void.class);
+
+        getTestRestTemplate().exchange(
+                String.format("/memberships?flatshare=%s&user=%s", FLATSHARE_ID, "00000000-0000-0000-0000-000000000001"), HttpMethod.DELETE,
+                null, Void.class);
+        getTestRestTemplate().exchange(
+                String.format("/memberships?flatshare=%s&user=%s", FLATSHARE_ID, "00000000-0000-0000-0000-000000000003"), HttpMethod.DELETE,
+                null, Void.class);
+
+        assertThat(getTestRestTemplate().getForEntity(String.format("/flatshares/%s", FLATSHARE_ID), Flatshare.class)
+                .getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
     @Test

@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import edu.kit.pse.fridget.server.exceptions.EntityConflictException;
@@ -73,8 +72,7 @@ public class MembershipServiceImpl implements MembershipService {
             throw new EntityConflictException("Membership already exists.");
         }
 
-        Optional<List<Membership>> memberships = membershipRepository.findByFlatshareId(flatshareId);
-        if ((memberships.isPresent() && memberships.get().size() == 15)) {
+        if ((membershipRepository.findByFlatshareId(flatshareId).orElseThrow(EntityUnprocessableException::new).size() == 15)) {
             throw new EntityConflictException("Flatshare already full.");
         }
 
@@ -92,15 +90,10 @@ public class MembershipServiceImpl implements MembershipService {
 
     @Override
     public void deleteMembership(String flatshareId, String userId) {
-        Optional<Membership> membership = membershipRepository.findByFlatshareIdAndUserId(flatshareId, userId);
+        membershipRepository.delete(membershipRepository.findByFlatshareIdAndUserId(flatshareId, userId)
+                .orElseThrow(() -> new EntityConflictException("Membership cannot be deleted, it does not exist.")));
 
-        if (!membership.isPresent()) {
-            throw new EntityConflictException("Membership cannot be deleted, it does not exist.");
-        }
-
-        membershipRepository.delete(membership.get());
-
-        if (membershipRepository.findAll().isEmpty()) {
+        if (!membershipRepository.findByFlatshareId(flatshareId).isPresent()) {
             flatshareRepository.deleteById(flatshareId);
         }
     }
