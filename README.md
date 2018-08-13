@@ -49,13 +49,15 @@ The server-side of [Fridget](https://github.com/YuKitAs/fridget-android) built w
 
 ### Run Server in Docker Container
 
-* Build project image:
-
+* Build artefact `fridget-server-0.1.0.jar` with Gradle Wrapper:
+  ```console
+  $ ./gradlew clean build
+  ```
+* Build Docker image from the existing `Dockerfile`:
   ```console
   # docker build --no-cache -t fridget-server-docker .
   ```
-* Run docker-compose:
-
+* Use Docker Compose to link containers:
   ```console
   # docker-compose up
   ```
