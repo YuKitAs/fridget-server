@@ -19,7 +19,7 @@ public class DeviceControllerIntegrationTest extends AbstractControllerIntegrati
 
     @Test
     public void saveDevice() throws Exception {
-        ResponseEntity<Device> response = getTestRestTemplate().postForEntity("/devices", getFixture("device0.json", Device.class),
+        ResponseEntity<Device> response = getTestRestTemplate().postForEntity("/devices", getFixture("deviceForSave.json", Device.class),
                 Device.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -32,9 +32,23 @@ public class DeviceControllerIntegrationTest extends AbstractControllerIntegrati
     }
 
     @Test
+    public void saveDevice_WithExistedUserId() throws Exception {
+        ResponseEntity<Device> response = getTestRestTemplate().postForEntity("/devices",
+                getFixture("deviceForSaveWithExistedUserId.json", Device.class), Device.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(response.getHeaders().getContentType().includes(MediaType.APPLICATION_JSON_UTF8)).isTrue();
+        assertThat(response.getBody()).satisfies(device -> {
+            assertThat(device.getId()).matches(Pattern.UUID_PATTERN);
+            assertThat(device.getUserId()).isEqualTo("00000000-0000-0000-0000-000000000000");
+            assertThat(device.getInstanceIdToken()).isEqualTo("new-valid-instance-id-token-0");
+        });
+    }
+
+    @Test
     public void saveDevice_WithIncorrectUserId() throws Exception {
         ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().postForEntity("/devices",
-                getFixture("deviceWithIncorrectUserId0.json", Device.class), ExceptionResponseBody.class);
+                getFixture("deviceForSaveWithIncorrectUserId.json", Device.class), ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
         assertThat(response.getBody().getErrorMessage()).isEqualTo(ENTITY_UNPROCESSABLE_ERROR_MESSAGE);
@@ -45,7 +59,7 @@ public class DeviceControllerIntegrationTest extends AbstractControllerIntegrati
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
         ResponseEntity<Device> response = getTestRestTemplate().exchange(String.format("/devices/%s", DEVICE_ID), HttpMethod.PUT,
-                new HttpEntity<>(getFixture("device1.json", Device.class), headers), Device.class);
+                new HttpEntity<>(getFixture("deviceForUpdate.json", Device.class), headers), Device.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getHeaders().getContentType().includes(MediaType.APPLICATION_JSON_UTF8)).isTrue();
@@ -61,7 +75,7 @@ public class DeviceControllerIntegrationTest extends AbstractControllerIntegrati
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
         ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().exchange(String.format("/devices/%s", DEVICE_ID),
-                HttpMethod.PUT, new HttpEntity<>(getFixture("deviceWithIncorrectUserId1.json", Device.class), headers),
+                HttpMethod.PUT, new HttpEntity<>(getFixture("deviceForUpdateWithIncorrectUserId.json", Device.class), headers),
                 ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);

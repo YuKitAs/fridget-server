@@ -2,12 +2,14 @@ package edu.kit.pse.fridget.server.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import edu.kit.pse.fridget.server.utilities.Pattern;
+
+import java.util.UUID;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.UUID;
+
+import edu.kit.pse.fridget.server.utilities.Pattern;
 
 @Entity
 @Table(name = "devices")
@@ -43,5 +45,9 @@ public class Device {
 
     public static Device buildNew(String userId, String instanceIdToken) {
         return new Device(UUID.randomUUID().toString(), userId, instanceIdToken);
+    }
+
+    public static Device buildForUpdate(String id, String userId, String instanceIdToken) {
+        return new Device(id, userId, instanceIdToken);
     }
 }

@@ -22,9 +22,13 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public Device saveDevice(Device device) {
         String userId = device.getUserId();
+        String instanceIdToken = device.getInstanceIdToken();
+
         userRepository.findById(userId).orElseThrow(EntityUnprocessableException::new);
 
-        return deviceRepository.save(Device.buildNew(userId, device.getInstanceIdToken()));
+        return deviceRepository.findByUserId(userId)
+                .map(dev -> deviceRepository.save(Device.buildForUpdate(dev.getId(), userId, instanceIdToken)))
+                .orElseGet(() -> deviceRepository.save(Device.buildNew(userId, instanceIdToken)));
     }
 
     @Override

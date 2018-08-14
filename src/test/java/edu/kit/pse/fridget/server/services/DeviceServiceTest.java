@@ -30,13 +30,13 @@ public class DeviceServiceTest extends AbstractServiceTest {
 
     @Test
     public void saveDevice_WithIncorrectUserId() {
-        assertThatThrownBy(() -> deviceService.saveDevice(getFixture("deviceWithIncorrectUserId0.json", Device.class))).isInstanceOf(
+        assertThatThrownBy(() -> deviceService.saveDevice(getFixture("deviceForSaveWithIncorrectUserId.json", Device.class))).isInstanceOf(
                 EntityUnprocessableException.class);
     }
 
     @Test
     public void updateDevice_WithIncorrectUserId() {
         assertThatThrownBy(() -> deviceService.updateDevice("00000000-0000-0000-0000-000000000000",
-                getFixture("deviceWithIncorrectUserId1.json", Device.class))).isInstanceOf(EntityUnprocessableException.class);
+                getFixture("deviceForUpdateWithIncorrectUserId.json", Device.class))).isInstanceOf(EntityUnprocessableException.class);
     }
 }
