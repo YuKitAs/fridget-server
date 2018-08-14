@@ -53,10 +53,17 @@ The server-side of [Fridget](https://github.com/YuKitAs/fridget-android) built w
   ```console
   $ ./gradlew clean build
   ```
+  
+  [Optional] Skip the tests:
+  ```console
+  $ ./gradlew build -x test integrationTest
+  ```
+  
 * Build Docker image from the existing `Dockerfile`:
   ```console
   # docker build --no-cache -t fridget-server-docker .
   ```
+  
 * Use Docker Compose to link containers:
   ```console
   # docker-compose up
