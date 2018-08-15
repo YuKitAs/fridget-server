@@ -1,21 +1,21 @@
 package edu.kit.pse.fridget.server.services;
 
+import edu.kit.pse.fridget.server.models.Membership;
+import edu.kit.pse.fridget.server.repositories.MembershipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
-
-import edu.kit.pse.fridget.server.models.Membership;
-import edu.kit.pse.fridget.server.repositories.MembershipRepository;
 
 @Service
 public class MagnetColorService {
     private static final String[] COLORS = {"6ddbff", "0054ff", "66666b", "cc0cf9", "cc0099", "7b1100", "ff0000", "ff9900", "f9f22a", "0eac0e", "006600", "009999", "ffcccc", "75ffca", "bdbdbd"};
     private final MembershipRepository membershipRepository;
+    private List<String> availableColors = new ArrayList<>();
 
     @Autowired
     public MagnetColorService(MembershipRepository membershipRepository) {
@@ -27,20 +27,20 @@ public class MagnetColorService {
     }
 
     String getAvailableRandomColor(String flatshareId) {
-        Optional<List<Membership>> memberships = membershipRepository.findByFlatshareId(flatshareId);
+        membershipRepository.findByFlatshareId(flatshareId).ifPresent(memberships -> {
+            List<String> magnetColors = memberships.stream().map(Membership::getMagnetColor).collect(Collectors.toList());
 
-        if (memberships.isPresent()) {
-            List<String> magnetColors = memberships.get().stream().map(Membership::getMagnetColor).collect(Collectors.toList());
-
-            List<String> availableColors = Arrays.stream(COLORS)
+            setAvailableColors(Arrays.stream(COLORS)
                     .collect(Collectors.toList())
                     .stream()
                     .filter(color -> !magnetColors.contains(color))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList()));
+        });
 
-            return availableColors.get(new Random().nextInt(availableColors.size()));
-        }
+        return availableColors.isEmpty() ? getRandomColor() : availableColors.get(new Random().nextInt(availableColors.size()));
+    }
 
-        return getRandomColor();
+    private void setAvailableColors(List<String> availableColors) {
+        this.availableColors = availableColors;
     }
 }
