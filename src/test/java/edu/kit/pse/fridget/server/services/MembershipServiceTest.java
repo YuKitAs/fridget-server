@@ -81,19 +81,20 @@ public class MembershipServiceTest extends AbstractServiceTest {
         memberships.add(membership0);
         memberships.add(membership1);
 
-        when(membershipRepository.findByFlatshareId(FLATSHARE_ID)).thenReturn(Optional.of(memberships));
-        when(membershipRepository.findByFlatshareId(INCORRECT_FLATSHARE_ID)).thenReturn(Optional.empty());
+        when(membershipRepository.findByFlatshareId(FLATSHARE_ID)).thenReturn(memberships);
         when(membershipRepository.findByFlatshareIdAndUserId(FLATSHARE_ID, userId0)).thenReturn(Optional.of(membership0));
-        when(membershipRepository.findByFlatshareIdAndUserId(FLATSHARE_ID, INCORRECT_USER_ID)).thenReturn(Optional.empty());
-        when(membershipRepository.findByFlatshareIdAndUserId(INCORRECT_FLATSHARE_ID, userId0)).thenReturn(Optional.empty());
+
         when(userRepository.findById(userId0)).thenReturn(Optional.of(user0));
         when(userRepository.findById(userId1)).thenReturn(Optional.of(user1));
         when(userRepository.findById(INCORRECT_USER_ID)).thenReturn(Optional.empty());
+
         when(flatshareRepository.findById(FLATSHARE_ID)).thenReturn(Optional.of(Flatshare.buildNew("dummy-flatshare")));
+
         when(accessCodeRepository.findByContent(ACCESS_CODE_CONTENT)).thenReturn(
                 Optional.of(AccessCode.buildNew(ACCESS_CODE_CONTENT, FLATSHARE_ID)));
         when(accessCodeRepository.findByContent(INCORRECT_ACCESS_CODE_CONTENT)).thenReturn(Optional.empty());
         doNothing().when(accessCodeRepository).deleteByContent(ACCESS_CODE_CONTENT);
+
         when(magnetColorService.getAvailableRandomColor(FLATSHARE_ID)).thenReturn(MAGNET_COLOR_1);
     }
 
@@ -116,7 +117,8 @@ public class MembershipServiceTest extends AbstractServiceTest {
 
     @Test
     public void getAllMembers_WithIncorrectFlatshareId() {
-        assertThatThrownBy(() -> membershipService.getAllMembers(INCORRECT_FLATSHARE_ID)).isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> membershipService.getAllMembers(INCORRECT_FLATSHARE_ID)).isInstanceOf(EntityNotFoundException.class)
+                .hasMessage(FLATSHARE_NOT_FOUND_ERROR_MESSAGE);
     }
 
     @Test
@@ -130,12 +132,22 @@ public class MembershipServiceTest extends AbstractServiceTest {
 
     @Test
     public void getMember_WithIncorrectFlatshareId() {
-        assertThatThrownBy(() -> membershipService.getMember(INCORRECT_FLATSHARE_ID, userId0)).isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> membershipService.getMember(INCORRECT_FLATSHARE_ID, userId0)).isInstanceOf(EntityNotFoundException.class)
+                .hasMessage(FLATSHARE_NOT_FOUND_ERROR_MESSAGE);
     }
 
     @Test
     public void getMember_WithIncorrectUserId() {
-        assertThatThrownBy(() -> membershipService.getMember(FLATSHARE_ID, INCORRECT_USER_ID)).isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> membershipService.getMember(FLATSHARE_ID, INCORRECT_USER_ID)).isInstanceOf(EntityNotFoundException.class)
+                .hasMessage(USER_NOT_FOUND_ERROR_MESSAGE);
+    }
+
+    @Test
+    public void getMember_WithNonExistentMembership() {
+        when(membershipRepository.findByFlatshareIdAndUserId(FLATSHARE_ID, userId1)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> membershipService.getMember(FLATSHARE_ID, userId1)).isInstanceOf(EntityNotFoundException.class)
+                .hasMessage("Membership not found.");
     }
 
     @Test
@@ -156,14 +168,30 @@ public class MembershipServiceTest extends AbstractServiceTest {
     public void saveMembership_WithIncorrectAccessCode() {
         assertThatThrownBy(
                 () -> membershipService.saveMembership(INCORRECT_ACCESS_CODE_CONTENT, userId1, new Membership.Builder())).isInstanceOf(
-                EntityNotFoundException.class);
+                EntityNotFoundException.class).hasMessage("Access code \"incorrect-access-code-content\" not found.");
     }
 
     @Test
     public void saveMembership_WithIncorrectUserId() {
         assertThatThrownBy(
                 () -> membershipService.saveMembership(ACCESS_CODE_CONTENT, INCORRECT_USER_ID, new Membership.Builder())).isInstanceOf(
-                EntityUnprocessableException.class);
+                EntityNotFoundException.class).hasMessage(USER_NOT_FOUND_ERROR_MESSAGE);
+    }
+
+    @Test
+    public void saveMembership_WithIncorrectFlatshareId() {
+        when(accessCodeRepository.findByContent(ACCESS_CODE_CONTENT)).thenReturn(
+                Optional.of(AccessCode.buildNew(ACCESS_CODE_CONTENT, INCORRECT_FLATSHARE_ID)));
+        when(flatshareRepository.findById(INCORRECT_FLATSHARE_ID)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> membershipService.saveMembership(ACCESS_CODE_CONTENT, userId1, new Membership.Builder())).isInstanceOf(
+                EntityUnprocessableException.class).hasMessage(ENTITY_UNPROCESSABLE_ERROR_MESSAGE);
+    }
+
+    @Test
+    public void saveMembership_WithExistedMembership() {
+        assertThatThrownBy(() -> membershipService.saveMembership(ACCESS_CODE_CONTENT, userId0, new Membership.Builder())).isInstanceOf(
+                EntityConflictException.class).hasMessage("Membership already exists.");
     }
 
     @Test
@@ -176,7 +204,7 @@ public class MembershipServiceTest extends AbstractServiceTest {
                         .setMagnetColor(magnetColorService.getAvailableRandomColor(FLATSHARE_ID))
                         .build()));
 
-        when(membershipRepository.findByFlatshareId(FLATSHARE_ID)).thenReturn(Optional.of(memberships));
+        when(membershipRepository.findByFlatshareId(FLATSHARE_ID)).thenReturn(memberships);
 
         assertThatThrownBy(() -> membershipService.saveMembership(ACCESS_CODE_CONTENT, userId1, new Membership.Builder())).isInstanceOf(
                 EntityConflictException.class).hasMessage("Flatshare already full.");
@@ -185,12 +213,20 @@ public class MembershipServiceTest extends AbstractServiceTest {
     @Test
     public void deleteMembership_WithIncorrectFlatshareId() {
         assertThatThrownBy(() -> membershipService.deleteMembership(INCORRECT_FLATSHARE_ID, userId0)).isInstanceOf(
-                EntityConflictException.class);
+                EntityNotFoundException.class).hasMessage(FLATSHARE_NOT_FOUND_ERROR_MESSAGE);
     }
 
     @Test
     public void deleteMembership_WithIncorrectUserId() {
         assertThatThrownBy(() -> membershipService.deleteMembership(FLATSHARE_ID, INCORRECT_USER_ID)).isInstanceOf(
-                EntityConflictException.class);
+                EntityNotFoundException.class).hasMessage(USER_NOT_FOUND_ERROR_MESSAGE);
+    }
+
+    @Test
+    public void deleteMembership_WithNonExistentMembership() {
+        when(membershipRepository.findByFlatshareIdAndUserId(FLATSHARE_ID, userId1)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> membershipService.deleteMembership(FLATSHARE_ID, userId1)).isInstanceOf(EntityConflictException.class)
+                .hasMessage("Membership cannot be deleted, it does not exist.");
     }
 }

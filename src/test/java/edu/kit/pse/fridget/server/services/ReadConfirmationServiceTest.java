@@ -55,7 +55,7 @@ public class ReadConfirmationServiceTest extends AbstractServiceTest {
         readConfirmations.add(ReadConfirmation.buildNew(membershipId0, COOL_NOTE_ID));
         readConfirmations.add(ReadConfirmation.buildNew(membershipId1, COOL_NOTE_ID));
 
-        when(readConfirmationRepository.findByCoolNoteId(COOL_NOTE_ID)).thenReturn(Optional.of(readConfirmations));
+        when(readConfirmationRepository.findByCoolNoteId(COOL_NOTE_ID)).thenReturn(readConfirmations);
         when(membershipRepository.findById(membershipId0)).thenReturn(Optional.of(membership0));
         when(membershipRepository.findById(membershipId1)).thenReturn(Optional.of(membership1));
         when(coolNoteRepository.findById(COOL_NOTE_ID)).thenReturn(Optional.of(coolNote));
@@ -73,7 +73,8 @@ public class ReadConfirmationServiceTest extends AbstractServiceTest {
 
     @Test
     public void getAllMemberships_WithIncorrectCoolNoteId() {
-        assertThatThrownBy(() -> service.getAllMemberships(INCORRECT_COOL_NOTE_ID)).isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> service.getAllMemberships(INCORRECT_COOL_NOTE_ID)).isInstanceOf(EntityNotFoundException.class)
+                .hasMessage(COOL_NOTE_NOT_FOUND_ERROR_MESSAGE);
     }
 
     @Test
@@ -93,25 +94,33 @@ public class ReadConfirmationServiceTest extends AbstractServiceTest {
     public void saveReadConfirmation_WithIncorrectCoolNoteId() {
         assertThatThrownBy(
                 () -> service.saveReadConfirmation(ReadConfirmation.buildNew(membershipId1, INCORRECT_COOL_NOTE_ID))).isInstanceOf(
-                EntityUnprocessableException.class);
+                EntityUnprocessableException.class).hasMessage(ENTITY_UNPROCESSABLE_ERROR_MESSAGE);
     }
 
     @Test
     public void saveReadConfirmation_WithIncorrectMembershipId() {
         assertThatThrownBy(
                 () -> service.saveReadConfirmation(ReadConfirmation.buildNew(COOL_NOTE_ID, INCORRECT_MEMBERSHIP_ID))).isInstanceOf(
-                EntityUnprocessableException.class);
+                EntityUnprocessableException.class).hasMessage(ENTITY_UNPROCESSABLE_ERROR_MESSAGE);
     }
 
     @Test
     public void deleteReadConfirmation_WithIncorrectCoolNoteId() {
         assertThatThrownBy(() -> service.deleteReadConfirmation(INCORRECT_COOL_NOTE_ID, membershipId1)).isInstanceOf(
-                EntityConflictException.class);
+                EntityNotFoundException.class).hasMessage(COOL_NOTE_NOT_FOUND_ERROR_MESSAGE);
     }
 
     @Test
     public void deleteReadConfirmation_WithIncorrectMembershipId() {
         assertThatThrownBy(() -> service.deleteReadConfirmation(COOL_NOTE_ID, INCORRECT_MEMBERSHIP_ID)).isInstanceOf(
-                EntityConflictException.class);
+                EntityNotFoundException.class).hasMessage("Membership id=\"incorrect-membership-id\" not found.");
+    }
+
+    @Test
+    public void deleteReadConfirmation_WithNonExistentMembership() {
+        when(readConfirmationRepository.findByCoolNoteIdAndMembershipId(COOL_NOTE_ID, membershipId0)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.deleteReadConfirmation(COOL_NOTE_ID, membershipId0)).isInstanceOf(EntityConflictException.class)
+                .hasMessage("Read confirmation cannot be deleted, it does not exist.");
     }
 }

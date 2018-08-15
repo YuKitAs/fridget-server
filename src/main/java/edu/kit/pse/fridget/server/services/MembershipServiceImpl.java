@@ -38,19 +38,19 @@ public class MembershipServiceImpl implements MembershipService {
 
     @Override
     public List<UserMembershipRepresentation> getAllMembers(String flatshareId) {
-        List<Membership> memberships = membershipRepository.findByFlatshareId(flatshareId)
-                .orElseThrow(() -> new EntityNotFoundException("Memberships not found."));
+        flatshareRepository.findById(flatshareId).orElseThrow(() -> new EntityNotFoundException("Flatshare", flatshareId));
 
-        return memberships.stream()
+        return membershipRepository.findByFlatshareId(flatshareId).stream()
                 .map(membership -> UserMembershipRepresentation.buildFromUserAndMembership(
-                        userRepository.findById(membership.getUserId()).orElseThrow(() -> new EntityNotFoundException("User not found.")),
-                        membership))
+                        userRepository.findById(membership.getUserId()).orElseThrow(EntityUnprocessableException::new), membership))
                 .collect(Collectors.toList());
     }
 
     @Override
     public UserMembershipRepresentation getMember(String flatshareId, String userId) {
+        flatshareRepository.findById(flatshareId).orElseThrow(() -> new EntityNotFoundException("Flatshare", flatshareId));
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User", userId));
+
         Membership membership = membershipRepository.findByFlatshareIdAndUserId(flatshareId, userId)
                 .orElseThrow(() -> new EntityNotFoundException("Membership not found."));
 
@@ -59,11 +59,12 @@ public class MembershipServiceImpl implements MembershipService {
 
     @Override
     public Membership saveMembership(String accessCodeContent, String userId, Membership.Builder membershipBuilder) {
-        AccessCode accessCode = accessCodeRepository.findByContent(accessCodeContent)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Access code %s not found.", accessCodeContent)));
-        String flatshareId = accessCode.getFlatshareId();
+        userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User", userId));
 
-        userRepository.findById(userId).orElseThrow(EntityUnprocessableException::new);
+        AccessCode accessCode = accessCodeRepository.findByContent(accessCodeContent)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Access code \"%s\" not found.", accessCodeContent)));
+
+        String flatshareId = accessCode.getFlatshareId();
         flatshareRepository.findById(flatshareId).orElseThrow(EntityUnprocessableException::new);
 
         accessCodeRepository.deleteByContent(accessCodeContent);
@@ -72,7 +73,7 @@ public class MembershipServiceImpl implements MembershipService {
             throw new EntityConflictException("Membership already exists.");
         }
 
-        if ((membershipRepository.findByFlatshareId(flatshareId).orElseThrow(EntityUnprocessableException::new).size() == 15)) {
+        if ((membershipRepository.findByFlatshareId(flatshareId).size() == 15)) {
             throw new EntityConflictException("Flatshare already full.");
         }
 
@@ -90,10 +91,13 @@ public class MembershipServiceImpl implements MembershipService {
 
     @Override
     public void deleteMembership(String flatshareId, String userId) {
+        flatshareRepository.findById(flatshareId).orElseThrow(() -> new EntityNotFoundException("Flatshare", flatshareId));
+        userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User", userId));
+
         membershipRepository.delete(membershipRepository.findByFlatshareIdAndUserId(flatshareId, userId)
                 .orElseThrow(() -> new EntityConflictException("Membership cannot be deleted, it does not exist.")));
 
-        if (!membershipRepository.findByFlatshareId(flatshareId).isPresent()) {
+        if (membershipRepository.findByFlatshareId(flatshareId).isEmpty()) {
             flatshareRepository.deleteById(flatshareId);
         }
     }

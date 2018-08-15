@@ -39,7 +39,6 @@ public class FrozenNoteControllerIntegrationTest extends AbstractControllerInteg
                 String.format("/frozen-notes?flatshare=%s", "incorrect-flatshare-id"), ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo("Frozen Notes not found.");
     }
 
     @Test
@@ -64,7 +63,6 @@ public class FrozenNoteControllerIntegrationTest extends AbstractControllerInteg
                 String.format("/frozen-notes/%s", "incorrect-id"), ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo("Frozen Note id=\"incorrect-id\" not found.");
     }
 
     @Test
@@ -91,7 +89,6 @@ public class FrozenNoteControllerIntegrationTest extends AbstractControllerInteg
                 ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo(ENTITY_UNPROCESSABLE_ERROR_MESSAGE);
     }
 
     @Test
@@ -103,6 +100,5 @@ public class FrozenNoteControllerIntegrationTest extends AbstractControllerInteg
                 ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo("Position 1 invalid.");
     }
 }

@@ -40,7 +40,7 @@ public class TaggedMemberServiceTest extends AbstractServiceTest {
         taggedMembers.add(TaggedMember.buildNew(membershipId0, COOL_NOTE_ID));
         taggedMembers.add(TaggedMember.buildNew(membershipId1, COOL_NOTE_ID));
 
-        when(taggedMemberRepository.findByCoolNoteId(COOL_NOTE_ID)).thenReturn(Optional.of(taggedMembers));
+        when(taggedMemberRepository.findByCoolNoteId(COOL_NOTE_ID)).thenReturn(taggedMembers);
         when(membershipRepository.findById(membershipId0)).thenReturn(Optional.of(membership0));
         when(membershipRepository.findById(membershipId1)).thenReturn(Optional.of(membership1));
     }

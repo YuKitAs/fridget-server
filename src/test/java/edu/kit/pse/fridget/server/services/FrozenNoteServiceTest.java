@@ -36,31 +36,46 @@ public class FrozenNoteServiceTest extends AbstractServiceTest {
         FrozenNote frozenNote = getFixture("frozenNote.json", FrozenNote.class);
         frozenNotes.add(frozenNote);
 
-        when(frozenNoteRepository.findByFlatshareId(INCORRECT_FLATSHARE_ID)).thenReturn(Optional.empty());
         when(frozenNoteRepository.findById(FROZEN_NOTE_ID)).thenReturn(Optional.of(frozenNote));
         when(frozenNoteRepository.findById(INCORRECT_FROZEN_NOTE_ID)).thenReturn(Optional.empty());
         when(flatshareRepository.findById(FLATSHARE_ID)).thenReturn(Optional.of(Flatshare.buildNew("dummy-flatshare")));
+        when(flatshareRepository.findById(INCORRECT_FLATSHARE_ID)).thenReturn(Optional.empty());
     }
 
     @Test
     public void getAllFrozenNotes_WithIncorrectFlatshareId() {
-        assertThatThrownBy(() -> service.getAllFrozenNotes(INCORRECT_FLATSHARE_ID)).isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> service.getAllFrozenNotes(INCORRECT_FLATSHARE_ID)).isInstanceOf(EntityNotFoundException.class)
+                .hasMessage(FLATSHARE_NOT_FOUND_ERROR_MESSAGE);
     }
 
     @Test
     public void getFrozenNote_WithIncorrectId() {
-        assertThatThrownBy(() -> service.getFrozenNote(INCORRECT_FROZEN_NOTE_ID)).isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> service.getFrozenNote(INCORRECT_FROZEN_NOTE_ID)).isInstanceOf(EntityNotFoundException.class)
+                .hasMessage("Frozen Note id=\"incorrect-frozen-note-id\" not found.");
+    }
+
+    @Test
+    public void updateFrozenNote_WithIncorrectId() {
+        assertThatThrownBy(
+                () -> service.updateFrozenNote(INCORRECT_FROZEN_NOTE_ID, getFixture("frozenNote.json", FrozenNote.class))).isInstanceOf(
+                EntityUnprocessableException.class).hasMessage(ENTITY_UNPROCESSABLE_ERROR_MESSAGE);
+
+        assertThatThrownBy(() -> service.updateFrozenNote(FROZEN_NOTE_ID,
+                getFixture("frozenNoteWithIncorrectId.json", FrozenNote.class))).isInstanceOf(EntityUnprocessableException.class)
+                .hasMessage(ENTITY_UNPROCESSABLE_ERROR_MESSAGE);
     }
 
     @Test
     public void updateFrozenNote_WithIncorrectFlatshareId() {
         assertThatThrownBy(() -> service.updateFrozenNote(FROZEN_NOTE_ID,
-                getFixture("frozenNoteWithIncorrectFlatshareId.json", FrozenNote.class))).isInstanceOf(EntityUnprocessableException.class);
+                getFixture("frozenNoteWithIncorrectFlatshareId.json", FrozenNote.class))).isInstanceOf(EntityUnprocessableException.class)
+                .hasMessage(ENTITY_UNPROCESSABLE_ERROR_MESSAGE);
     }
 
     @Test
     public void updateFrozenNote_WithIncorrectPosition() {
         assertThatThrownBy(() -> service.updateFrozenNote(FROZEN_NOTE_ID,
-                getFixture("frozenNoteWithIncorrectPosition.json", FrozenNote.class))).isInstanceOf(EntityConflictException.class);
+                getFixture("frozenNoteWithIncorrectPosition.json", FrozenNote.class))).isInstanceOf(EntityConflictException.class)
+                .hasMessage("Position 1 invalid.");
     }
 }

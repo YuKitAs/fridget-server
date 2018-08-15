@@ -19,7 +19,6 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
     private static final String USER_ID = "00000000-0000-0000-0000-000000000000";
     private static final String MAGNET_COLOR = "0099cc";
     private static final String GOOGLE_NAME = "John Doe";
-    private static final String MEMBERSHIP_CONFLICT_ERROR_MESSAGE = "Membership cannot be deleted, it does not exist.";
 
     @Test
     public void getAllMembers() {
@@ -43,7 +42,6 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
                 String.format("/memberships/users?flatshare=%s", "incorrect-flatshare-id"), ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo("Memberships not found.");
     }
 
     @Test
@@ -66,7 +64,6 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
                 String.format("/memberships?flatshare=%s&user=%s", FLATSHARE_ID, "incorrect-user-id"), ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo("User id=\"incorrect-user-id\" not found.");
     }
 
     @Test
@@ -75,7 +72,6 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
                 String.format("/memberships?flatshare=%s&user=%s", "incorrect-flatshare-id", USER_ID), ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo("Membership not found.");
     }
 
     @Test
@@ -103,7 +99,6 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
                 new SaveMembershipCommand("12345", "00000000-0000-0000-0000-000000000002"), ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo("Access code 12345 not found.");
     }
 
     @Test
@@ -111,12 +106,11 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
         ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().postForEntity("/memberships",
                 new SaveMembershipCommand("abc42", "incorrect-user-id"), ExceptionResponseBody.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo(ENTITY_UNPROCESSABLE_ERROR_MESSAGE);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
     @Test
-    public void saveMembership_WithExistedUserId_ReturnsConflict() throws Exception {
+    public void saveMembership_WithExistedMembership_ReturnsConflict() throws Exception {
         getTestRestTemplate().postForEntity("/memberships", getFixture("saveMembershipCommand0.json", SaveMembershipCommand.class),
                 Membership.class);
 
@@ -124,7 +118,6 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
                 getFixture("saveMembershipCommand1.json", SaveMembershipCommand.class), ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo("Membership already exists.");
     }
 
     @Test
@@ -160,8 +153,7 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
                 String.format("/memberships?flatshare=%s&user=%s", "incorrect-flatshare-id", USER_ID), HttpMethod.DELETE, null,
                 ExceptionResponseBody.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo(MEMBERSHIP_CONFLICT_ERROR_MESSAGE);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
     @Test
@@ -170,7 +162,6 @@ public class MembershipControllerIntegrationTest extends AbstractControllerInteg
                 String.format("/memberships?flatshare=%s&user=%s", FLATSHARE_ID, "incorrect-user-id"), HttpMethod.DELETE, null,
                 ExceptionResponseBody.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo(MEMBERSHIP_CONFLICT_ERROR_MESSAGE);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 }

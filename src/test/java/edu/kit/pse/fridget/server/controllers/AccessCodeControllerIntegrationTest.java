@@ -31,7 +31,6 @@ public class AccessCodeControllerIntegrationTest extends AbstractControllerInteg
         ResponseEntity<ExceptionResponseBody> response = getTestRestTemplate().postForEntity("/access-codes",
                 AccessCode.buildNew(null, "incorrect-flatshare-id"), ExceptionResponseBody.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo(ENTITY_UNPROCESSABLE_ERROR_MESSAGE);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 }

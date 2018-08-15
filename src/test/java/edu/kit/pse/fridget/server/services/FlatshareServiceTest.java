@@ -54,7 +54,8 @@ public class FlatshareServiceTest extends AbstractServiceTest {
 
     @Test
     public void getFlatshare_WithIncorrectId() {
-        assertThatThrownBy(() -> flatshareService.getFlatshare(INCORRECT_FLATSHARE_ID)).isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> flatshareService.getFlatshare(INCORRECT_FLATSHARE_ID)).isInstanceOf(EntityNotFoundException.class)
+                .hasMessage(FLATSHARE_NOT_FOUND_ERROR_MESSAGE);
     }
 
     @Test
@@ -84,6 +85,6 @@ public class FlatshareServiceTest extends AbstractServiceTest {
     @Test
     public void saveFlatshare_WithIncorrectUserId() {
         assertThatThrownBy(() -> flatshareService.saveFlatshare(createdFlatshare, INCORRECT_USER_ID)).isInstanceOf(
-                EntityUnprocessableException.class);
+                EntityUnprocessableException.class).hasMessage(ENTITY_UNPROCESSABLE_ERROR_MESSAGE);
     }
 }

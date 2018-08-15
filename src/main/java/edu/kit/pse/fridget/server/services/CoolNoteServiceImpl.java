@@ -7,10 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import edu.kit.pse.fridget.server.exceptions.EntityConflictException;
@@ -21,6 +18,7 @@ import edu.kit.pse.fridget.server.models.Membership;
 import edu.kit.pse.fridget.server.models.TaggedMember;
 import edu.kit.pse.fridget.server.repositories.CoolNoteRepository;
 import edu.kit.pse.fridget.server.repositories.DeviceRepository;
+import edu.kit.pse.fridget.server.repositories.FlatshareRepository;
 import edu.kit.pse.fridget.server.repositories.MembershipRepository;
 import edu.kit.pse.fridget.server.repositories.TaggedMemberRepository;
 
@@ -32,41 +30,38 @@ public class CoolNoteServiceImpl implements CoolNoteService {
     private final MembershipRepository membershipRepository;
     private final DeviceRepository deviceRepository;
     private final TaggedMemberRepository taggedMemberRepository;
+    private final FlatshareRepository flatshareRepository;
     private final FirebaseService firebaseService;
 
     @Autowired
     public CoolNoteServiceImpl(CoolNoteRepository coolNoteRepository, MembershipRepository membershipRepository,
-            DeviceRepository deviceRepository, TaggedMemberRepository taggedMemberRepository, FirebaseService firebaseService) {
+            DeviceRepository deviceRepository, TaggedMemberRepository taggedMemberRepository, FlatshareRepository flatshareRepository,
+            FirebaseService firebaseService) {
         this.coolNoteRepository = coolNoteRepository;
         this.membershipRepository = membershipRepository;
         this.deviceRepository = deviceRepository;
         this.taggedMemberRepository = taggedMemberRepository;
+        this.flatshareRepository = flatshareRepository;
         this.firebaseService = firebaseService;
     }
 
     @Override
     public List<CoolNote> getAllCoolNotes(String flatshareId) {
-        List<CoolNote> coolNotes = coolNoteRepository.findByFlatshareId(flatshareId)
-                .orElseThrow(() -> new EntityNotFoundException("Cool Notes not found."));
+        flatshareRepository.findById(flatshareId).orElseThrow(() -> new EntityNotFoundException("Flatshare", flatshareId));
 
-        return coolNotes.stream().map(coolNote -> {
-            Optional<List<TaggedMember>> taggedMembers = taggedMemberRepository.findByCoolNoteId(coolNote.getId());
-
-            return (!taggedMembers.isPresent() || taggedMembers.get().isEmpty()) ? CoolNote.buildForFetching(coolNote,
-                    Collections.emptyList()) : CoolNote.buildForFetching(coolNote,
-                    taggedMembers.get().stream().map(TaggedMember::getId).collect(Collectors.toList()));
-        }).collect(Collectors.toList());
+        return coolNoteRepository.findByFlatshareId(flatshareId)
+                .stream()
+                .map(coolNote -> CoolNote.buildForFetching(coolNote, taggedMemberRepository.findByCoolNoteId(coolNote.getId())
+                        .stream()
+                        .map(TaggedMember::getId)
+                        .collect(Collectors.toList())))
+                .collect(Collectors.toList());
     }
 
     @Override
     public CoolNote getCoolNote(String id) {
-        CoolNote coolNote = coolNoteRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Cool Note", id));
-
-        Optional<List<TaggedMember>> taggedMembers = taggedMemberRepository.findByCoolNoteId(id);
-
-        return (!taggedMembers.isPresent() || taggedMembers.get().isEmpty()) ? CoolNote.buildForFetching(coolNote,
-                Collections.emptyList()) : CoolNote.buildForFetching(coolNote,
-                taggedMembers.get().stream().map(TaggedMember::getId).collect(Collectors.toList()));
+        return CoolNote.buildForFetching(coolNoteRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Cool Note", id)),
+                taggedMemberRepository.findByCoolNoteId(id).stream().map(TaggedMember::getId).collect(Collectors.toList()));
     }
 
     @Override
@@ -74,8 +69,7 @@ public class CoolNoteServiceImpl implements CoolNoteService {
         Membership creatorMembership = membershipRepository.findById(coolNote.getCreatorMembershipId())
                 .orElseThrow(EntityUnprocessableException::new);
 
-        Optional<List<CoolNote>> coolNotes = coolNoteRepository.findByFlatshareId(creatorMembership.getFlatshareId());
-        if (coolNotes.isPresent() && coolNotes.get()
+        if (coolNoteRepository.findByFlatshareId(creatorMembership.getFlatshareId())
                 .stream()
                 .map(CoolNote::getPosition)
                 .collect(Collectors.toList())
@@ -87,9 +81,9 @@ public class CoolNoteServiceImpl implements CoolNoteService {
 
         String coolNoteId = newCoolNote.getId();
 
-        Optional<List<TaggedMember>> taggedMembers = taggedMemberRepository.findByCoolNoteId(coolNoteId);
-        if (taggedMembers.isPresent() && !taggedMembers.get().isEmpty()) {
-            sendMessagesToTaggedMembers(taggedMembers.get(), coolNoteId);
+        List<TaggedMember> taggedMembers = taggedMemberRepository.findByCoolNoteId(coolNoteId);
+        if (!taggedMembers.isEmpty()) {
+            sendMessagesToTaggedMembers(taggedMembers, coolNoteId);
         } else {
             sendMessagesToAll(creatorMembership, coolNoteId);
         }
@@ -108,7 +102,6 @@ public class CoolNoteServiceImpl implements CoolNoteService {
         LOG.info("Sending push notification to all roommates of (user ID) " + creatorMembership.getUserId());
 
         sendMessages(membershipRepository.findByFlatshareId(creatorMembership.getFlatshareId())
-                .get()
                 .stream()
                 .filter(membership -> !membership.getUserId().equals(creatorMembership.getUserId()))
                 .peek(membership -> LOG.info("Push notification will be sent to (user ID)" + membership.getUserId()))

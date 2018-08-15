@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
 import edu.kit.pse.fridget.server.models.CoolNote;
 
@@ -14,5 +13,5 @@ public interface CoolNoteRepository extends JpaRepository<CoolNote, String> {
             + "JOIN memberships ON memberships.id = cool_notes.creator_membership_id " //
             + "JOIN flatshares ON memberships.flatshare_id = flatshares.id " //
             + "WHERE flatshares.id = :flatshareId", nativeQuery = true)
-    Optional<List<CoolNote>> findByFlatshareId(@Param("flatshareId") String flatshareId);
+    List<CoolNote> findByFlatshareId(@Param("flatshareId") String flatshareId);
 }

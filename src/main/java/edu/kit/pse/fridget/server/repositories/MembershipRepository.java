@@ -8,7 +8,7 @@ import java.util.Optional;
 import edu.kit.pse.fridget.server.models.Membership;
 
 public interface MembershipRepository extends JpaRepository<Membership, String> {
-    Optional<List<Membership>> findByFlatshareId(String flatshareId);
+    List<Membership> findByFlatshareId(String flatshareId);
 
     Optional<Membership> findByFlatshareIdAndUserId(String flatshareId, String userId);
 }

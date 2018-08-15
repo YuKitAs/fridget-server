@@ -8,7 +8,7 @@ import org.mockito.Mock;
 
 import java.util.Optional;
 
-import edu.kit.pse.fridget.server.exceptions.EntityUnprocessableException;
+import edu.kit.pse.fridget.server.exceptions.EntityNotFoundException;
 import edu.kit.pse.fridget.server.models.AccessCode;
 import edu.kit.pse.fridget.server.models.Flatshare;
 import edu.kit.pse.fridget.server.repositories.AccessCodeRepository;
@@ -49,6 +49,7 @@ public class AccessCodeServiceTest extends AbstractServiceTest {
 
     @Test
     public void generateAccessCode_WithIncorrectFlatshareId() {
-        assertThatThrownBy(() -> service.generateAccessCode(INCORRECT_FLATSHARE_ID)).isInstanceOf(EntityUnprocessableException.class);
+        assertThatThrownBy(() -> service.generateAccessCode(INCORRECT_FLATSHARE_ID)).isInstanceOf(EntityNotFoundException.class)
+                .hasMessage(FLATSHARE_NOT_FOUND_ERROR_MESSAGE);
     }
 }

@@ -7,7 +7,6 @@ import org.mockito.Mock;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import edu.kit.pse.fridget.server.models.Membership;
 import edu.kit.pse.fridget.server.repositories.MembershipRepository;
@@ -36,7 +35,7 @@ public class MagnetColorServiceTest extends AbstractServiceTest {
                 .setMagnetColor(MAGNET_COLOR_2)
                 .build());
 
-        when(membershipRepository.findByFlatshareId(FLATSHARE_ID)).thenReturn(Optional.of(memberships));
+        when(membershipRepository.findByFlatshareId(FLATSHARE_ID)).thenReturn(memberships);
     }
 
     @Test

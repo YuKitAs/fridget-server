@@ -34,7 +34,6 @@ public abstract class AbstractControllerIntegrationTest {
     private JdbcTemplate jdbcTemplate;
 
     static final String FLATSHARE_ID = "00000000-0000-0000-0000-000000000000";
-    static final String ENTITY_UNPROCESSABLE_ERROR_MESSAGE = "Request contains invalid data that cannot be processed.";
 
     TestRestTemplate getTestRestTemplate() {
         return testRestTemplate;

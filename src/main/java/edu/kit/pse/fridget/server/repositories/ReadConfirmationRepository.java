@@ -8,7 +8,7 @@ import java.util.Optional;
 import edu.kit.pse.fridget.server.models.ReadConfirmation;
 
 public interface ReadConfirmationRepository extends JpaRepository<ReadConfirmation, String> {
-    Optional<List<ReadConfirmation>> findByCoolNoteId(String id);
+    List<ReadConfirmation> findByCoolNoteId(String id);
 
     Optional<ReadConfirmation> findByCoolNoteIdAndMembershipId(String coolNoteId, String membershipId);
 

@@ -34,7 +34,6 @@ public class FlatshareControllerIntegrationTest extends AbstractControllerIntegr
                 ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo("Flatshare id=\"incorrect-id\" not found.");
     }
 
     @Test
@@ -56,6 +55,5 @@ public class FlatshareControllerIntegrationTest extends AbstractControllerIntegr
                 new SaveFlatshareCommand("incorrect-user-id", FLATSHARE_NAME), ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo(ENTITY_UNPROCESSABLE_ERROR_MESSAGE);
     }
 }

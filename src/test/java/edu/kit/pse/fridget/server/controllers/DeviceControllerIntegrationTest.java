@@ -51,7 +51,6 @@ public class DeviceControllerIntegrationTest extends AbstractControllerIntegrati
                 getFixture("deviceForSaveWithIncorrectUserId.json", Device.class), ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo(ENTITY_UNPROCESSABLE_ERROR_MESSAGE);
     }
 
     @Test
@@ -79,6 +78,5 @@ public class DeviceControllerIntegrationTest extends AbstractControllerIntegrati
                 ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo(ENTITY_UNPROCESSABLE_ERROR_MESSAGE);
     }
 }

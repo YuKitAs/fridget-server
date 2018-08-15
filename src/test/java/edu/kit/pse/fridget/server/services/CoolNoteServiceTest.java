@@ -15,6 +15,7 @@ import edu.kit.pse.fridget.server.exceptions.EntityUnprocessableException;
 import edu.kit.pse.fridget.server.models.CoolNote;
 import edu.kit.pse.fridget.server.models.Membership;
 import edu.kit.pse.fridget.server.repositories.CoolNoteRepository;
+import edu.kit.pse.fridget.server.repositories.FlatshareRepository;
 import edu.kit.pse.fridget.server.repositories.MembershipRepository;
 import edu.kit.pse.fridget.server.repositories.TaggedMemberRepository;
 
@@ -30,45 +31,50 @@ public class CoolNoteServiceTest extends AbstractServiceTest {
     private MembershipRepository membershipRepository;
     @Mock
     private TaggedMemberRepository taggedMemberRepository;
+    @Mock
+    private FlatshareRepository flatshareRepository;
 
     @Before
     public void setUp() throws Exception {
         List<CoolNote> coolNotes = new ArrayList<>();
         coolNotes.add(getFixture("coolNote1.json", CoolNote.class));
 
-        when(coolNoteRepository.findByFlatshareId(FLATSHARE_ID)).thenReturn(Optional.of(coolNotes));
-        when(coolNoteRepository.findByFlatshareId(INCORRECT_FLATSHARE_ID)).thenReturn(Optional.empty());
+        when(coolNoteRepository.findByFlatshareId(FLATSHARE_ID)).thenReturn(coolNotes);
         when(coolNoteRepository.findById(INCORRECT_COOL_NOTE_ID)).thenReturn(Optional.empty());
         when(membershipRepository.findById("00000000-0000-0000-0000-000000000000")).thenReturn(
                 Optional.of(getFixture("membership0.json", Membership.class)));
+        when(flatshareRepository.findById(INCORRECT_FLATSHARE_ID)).thenReturn(Optional.empty());
     }
 
     @Test
     public void getAllCoolNotes_WithIncorrectFlatshareId() {
-        assertThatThrownBy(() -> coolNoteService.getAllCoolNotes(INCORRECT_FLATSHARE_ID)).isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> coolNoteService.getAllCoolNotes(INCORRECT_FLATSHARE_ID)).isInstanceOf(EntityNotFoundException.class)
+                .hasMessage(FLATSHARE_NOT_FOUND_ERROR_MESSAGE);
     }
 
     @Test
     public void getCoolNote_WithIncorrectId() {
-        assertThatThrownBy(() -> coolNoteService.getCoolNote(INCORRECT_COOL_NOTE_ID)).isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> coolNoteService.getCoolNote(INCORRECT_COOL_NOTE_ID)).isInstanceOf(EntityNotFoundException.class)
+                .hasMessage(COOL_NOTE_NOT_FOUND_ERROR_MESSAGE);
     }
 
     @Test
     public void saveCoolNote_WithIncorrectCreatorMembershipId() {
         assertThatThrownBy(() -> coolNoteService.saveCoolNote(
                 getFixture("coolNoteWithIncorrectCreatorMembershipId.json", CoolNote.class))).isInstanceOf(
-                EntityUnprocessableException.class);
+                EntityUnprocessableException.class).hasMessage(ENTITY_UNPROCESSABLE_ERROR_MESSAGE);
     }
 
     @Test
     public void saveCoolNote_WithIncorrectPosition() {
         assertThatThrownBy(
                 () -> coolNoteService.saveCoolNote(getFixture("coolNoteWithIncorrectPosition.json", CoolNote.class))).isInstanceOf(
-                EntityConflictException.class);
+                EntityConflictException.class).hasMessage("Position 0 invalid.");
     }
 
     @Test
     public void deleteCoolNote_WithIncorrectId() {
-        assertThatThrownBy(() -> coolNoteService.deleteCoolNote(INCORRECT_COOL_NOTE_ID)).isInstanceOf(EntityConflictException.class);
+        assertThatThrownBy(() -> coolNoteService.deleteCoolNote(INCORRECT_COOL_NOTE_ID)).isInstanceOf(EntityConflictException.class)
+                .hasMessage("Cool Note id=\"incorrect-cool-note-id\" cannot be deleted, it does not exist.");
     }
 }

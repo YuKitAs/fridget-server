@@ -52,7 +52,6 @@ public class CoolNoteControllerIntegrationTest extends AbstractControllerIntegra
                 String.format("/cool-notes?flatshare=%s", "incorrect-flatshare-id"), ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo("Cool Notes not found.");
     }
 
     @Test
@@ -79,7 +78,6 @@ public class CoolNoteControllerIntegrationTest extends AbstractControllerIntegra
                 ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo("Cool Note id=\"incorrect-id\" not found.");
     }
 
     @Test
@@ -105,7 +103,6 @@ public class CoolNoteControllerIntegrationTest extends AbstractControllerIntegra
                 getFixture("coolNoteWithIncorrectCreatorMembershipId.json", CoolNote.class), ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo(ENTITY_UNPROCESSABLE_ERROR_MESSAGE);
     }
 
     @Test
@@ -114,7 +111,6 @@ public class CoolNoteControllerIntegrationTest extends AbstractControllerIntegra
                 getFixture("coolNoteWithIncorrectPosition.json", CoolNote.class), ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo("Position 0 invalid.");
     }
 
     @Test
@@ -132,7 +128,5 @@ public class CoolNoteControllerIntegrationTest extends AbstractControllerIntegra
                 String.format("/cool-notes/%s", "incorrect-cool-note-id"), HttpMethod.DELETE, null, ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo(
-                "Cool Note id=\"incorrect-cool-note-id\" cannot be deleted, it does not exist.");
     }
 }

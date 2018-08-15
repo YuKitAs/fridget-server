@@ -25,8 +25,9 @@ public class FrozenNoteServiceImpl implements FrozenNoteService {
 
     @Override
     public List<FrozenNote> getAllFrozenNotes(String flatshareId) {
-        return frozenNoteRepository.findByFlatshareId(flatshareId)
-                .orElseThrow(() -> new EntityNotFoundException("Frozen Notes not found."));
+        flatshareRepository.findById(flatshareId).orElseThrow(() -> new EntityNotFoundException("Flatshare", flatshareId));
+
+        return frozenNoteRepository.findByFlatshareId(flatshareId);
     }
 
     @Override

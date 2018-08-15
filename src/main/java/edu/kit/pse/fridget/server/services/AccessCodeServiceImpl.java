@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.Random;
 import java.util.stream.IntStream;
 
-import edu.kit.pse.fridget.server.exceptions.EntityUnprocessableException;
+import edu.kit.pse.fridget.server.exceptions.EntityNotFoundException;
 import edu.kit.pse.fridget.server.models.AccessCode;
 import edu.kit.pse.fridget.server.repositories.AccessCodeRepository;
 import edu.kit.pse.fridget.server.repositories.FlatshareRepository;
@@ -24,7 +24,7 @@ public class AccessCodeServiceImpl implements AccessCodeService {
 
     @Override
     public AccessCode generateAccessCode(String flatshareId) {
-        flatshareRepository.findById(flatshareId).orElseThrow(EntityUnprocessableException::new);
+        flatshareRepository.findById(flatshareId).orElseThrow(() -> new EntityNotFoundException("Flatshare", flatshareId));
 
         return accessCodeRepository.save(AccessCode.buildNew(generateRandomContent(), flatshareId));
     }

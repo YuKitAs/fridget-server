@@ -21,6 +21,11 @@ public abstract class AbstractServiceTest {
     static final String MAGNET_COLOR_1 = "ffffff";
     static final String MAGNET_COLOR_2 = "0054ff";
 
+    static final String FLATSHARE_NOT_FOUND_ERROR_MESSAGE = "Flatshare id=\"incorrect-flatshare-id\" not found.";
+    static final String USER_NOT_FOUND_ERROR_MESSAGE = "User id=\"incorrect-user-id\" not found.";
+    static final String COOL_NOTE_NOT_FOUND_ERROR_MESSAGE = "Cool Note id=\"incorrect-cool-note-id\" not found.";
+    static final String ENTITY_UNPROCESSABLE_ERROR_MESSAGE = "Request contains invalid data that cannot be processed.";
+
     <T> T getFixture(String filePath, Class<T> objectClass) throws Exception {
         return new ObjectMapper().readValue(new File("src/test/resources/fixtures/" + filePath), objectClass);
     }

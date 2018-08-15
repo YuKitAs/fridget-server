@@ -17,7 +17,6 @@ public class ReadConfirmationControllerIntegrationTest extends AbstractControlle
     private static final String COOL_NOTE_ID = "00000000-0000-0000-0000-000000000000";
     private static final String MEMBERSHIP_ID = "00000000-0000-0000-0000-000000000001";
     private static final String MAGNET_COLOR = "ffffff";
-    private static final String READ_CONFIRMATION_CONFLICT_ERROR_MESSAGE = "Read confirmation cannot be deleted, it does not exist.";
 
     @Test
     public void getAllMemberships() {
@@ -42,7 +41,6 @@ public class ReadConfirmationControllerIntegrationTest extends AbstractControlle
                 String.format("/read-confirmations/users?cool-note=%s", "incorrect-cool-note-id"), ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo("Read confirmations not found.");
     }
 
     @Test
@@ -65,7 +63,6 @@ public class ReadConfirmationControllerIntegrationTest extends AbstractControlle
                 ReadConfirmation.buildNew("incorrect-membership-id", COOL_NOTE_ID), ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo(ENTITY_UNPROCESSABLE_ERROR_MESSAGE);
     }
 
     @Test
@@ -74,7 +71,6 @@ public class ReadConfirmationControllerIntegrationTest extends AbstractControlle
                 ReadConfirmation.buildNew("00000000-0000-0000-0000-000000000002", "incorrect-cool-note-id"), ExceptionResponseBody.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo(ENTITY_UNPROCESSABLE_ERROR_MESSAGE);
     }
 
     @Test
@@ -105,8 +101,7 @@ public class ReadConfirmationControllerIntegrationTest extends AbstractControlle
                 String.format("/read-confirmations?cool-note=%s&membership=%s", "incorrect-cool-note-id", MEMBERSHIP_ID), HttpMethod.DELETE,
                 null, ExceptionResponseBody.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo(READ_CONFIRMATION_CONFLICT_ERROR_MESSAGE);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
     @Test
@@ -115,7 +110,6 @@ public class ReadConfirmationControllerIntegrationTest extends AbstractControlle
                 String.format("/read-confirmations?cool-note=%s&membership=%s", COOL_NOTE_ID, "incorrect-membership-id"), HttpMethod.DELETE,
                 null, ExceptionResponseBody.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-        assertThat(response.getBody().getErrorMessage()).isEqualTo(READ_CONFIRMATION_CONFLICT_ERROR_MESSAGE);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 }

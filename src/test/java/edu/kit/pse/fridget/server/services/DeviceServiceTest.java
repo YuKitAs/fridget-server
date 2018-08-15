@@ -16,6 +16,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 public class DeviceServiceTest extends AbstractServiceTest {
+    private static final String DEVICE_ID = "00000000-0000-0000-0000-000000000000";
     @InjectMocks
     private DeviceServiceImpl deviceService;
     @Mock
@@ -31,12 +32,24 @@ public class DeviceServiceTest extends AbstractServiceTest {
     @Test
     public void saveDevice_WithIncorrectUserId() {
         assertThatThrownBy(() -> deviceService.saveDevice(getFixture("deviceForSaveWithIncorrectUserId.json", Device.class))).isInstanceOf(
-                EntityUnprocessableException.class);
+                EntityUnprocessableException.class).hasMessage(ENTITY_UNPROCESSABLE_ERROR_MESSAGE);
+    }
+
+    @Test
+    public void updateDevice_WithIncorrectId() {
+        assertThatThrownBy(
+                () -> deviceService.updateDevice("incorrect-device-id", getFixture("deviceForUpdate.json", Device.class))).isInstanceOf(
+                EntityUnprocessableException.class).hasMessage(ENTITY_UNPROCESSABLE_ERROR_MESSAGE);
+
+        assertThatThrownBy(
+                () -> deviceService.updateDevice(DEVICE_ID, getFixture("deviceForUpdateWithIncorrectId.json", Device.class))).isInstanceOf(
+                EntityUnprocessableException.class).hasMessage(ENTITY_UNPROCESSABLE_ERROR_MESSAGE);
     }
 
     @Test
     public void updateDevice_WithIncorrectUserId() {
-        assertThatThrownBy(() -> deviceService.updateDevice("00000000-0000-0000-0000-000000000000",
-                getFixture("deviceForUpdateWithIncorrectUserId.json", Device.class))).isInstanceOf(EntityUnprocessableException.class);
+        assertThatThrownBy(() -> deviceService.updateDevice(DEVICE_ID, getFixture("deviceForUpdateWithIncorrectUserId.json", Device.class)))
+                .isInstanceOf(EntityUnprocessableException.class)
+                .hasMessage(ENTITY_UNPROCESSABLE_ERROR_MESSAGE);
     }
 }
