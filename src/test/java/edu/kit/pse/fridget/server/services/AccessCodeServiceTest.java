@@ -8,11 +8,13 @@ import org.mockito.Mock;
 
 import java.util.Optional;
 
+import edu.kit.pse.fridget.server.exceptions.EntityConflictException;
 import edu.kit.pse.fridget.server.exceptions.EntityNotFoundException;
 import edu.kit.pse.fridget.server.models.AccessCode;
 import edu.kit.pse.fridget.server.models.Flatshare;
 import edu.kit.pse.fridget.server.repositories.AccessCodeRepository;
 import edu.kit.pse.fridget.server.repositories.FlatshareRepository;
+import edu.kit.pse.fridget.server.repositories.MembershipRepository;
 import edu.kit.pse.fridget.server.utilities.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -27,6 +29,8 @@ public class AccessCodeServiceTest extends AbstractServiceTest {
     private AccessCodeRepository accessCodeRepository;
     @Mock
     private FlatshareRepository flatshareRepository;
+    @Mock
+    private MembershipRepository membershipRepository;
 
     @Before
     public void setUp() {
@@ -51,5 +55,13 @@ public class AccessCodeServiceTest extends AbstractServiceTest {
     public void generateAccessCode_WithIncorrectFlatshareId() {
         assertThatThrownBy(() -> service.generateAccessCode(INCORRECT_FLATSHARE_ID)).isInstanceOf(EntityNotFoundException.class)
                 .hasMessage(FLATSHARE_NOT_FOUND_ERROR_MESSAGE);
+    }
+
+    @Test
+    public void gererateAccessCode_WithFullFlatshare() {
+        when(membershipRepository.findByFlatshareId(FLATSHARE_ID)).thenReturn(createMembershipList());
+
+        assertThatThrownBy(() -> service.generateAccessCode(FLATSHARE_ID)).isInstanceOf(EntityConflictException.class)
+                .hasMessage(FLATSHARE_FULL_ERROR_MESSAGE);
     }
 }

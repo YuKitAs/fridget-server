@@ -2,7 +2,7 @@ package edu.kit.pse.fridget.server.services;
 
 import com.google.firebase.messaging.Notification;
 
-public class FirebaseServiceMock implements FirebaseService {
+public class FirebaseServiceStub implements FirebaseService {
     @Override
     public void initializeApp() {
         /* Do nothing */
