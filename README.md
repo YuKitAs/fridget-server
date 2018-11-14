@@ -1,11 +1,10 @@
 # fridget-server
 
 [![Build Status](https://travis-ci.org/YuKitAs/fridget-server.svg?branch=master)](https://travis-ci.org/YuKitAs/fridget-server)
-[![Coverage Status](https://coveralls.io/repos/github/YuKitAs/fridget-server/badge.svg?branch=master)](https://coveralls.io/github/YuKitAs/fridget-server?branch=master)
 
 The server-side of [Fridget](https://github.com/YuKitAs/fridget-android) built with [Spring Boot](https://spring.io/projects/spring-boot).
 
-## Development & Test
+## Local Development
 
 ### Prerequisite
 
